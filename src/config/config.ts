@@ -1,6 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import convict from 'convict';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const config = convict({
   env: {

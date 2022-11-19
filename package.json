@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "convict": "^6.2.3",
+    "dotenv": "^16.0.3",
     "fastify": "^4.10.0"
   }
 }
