@@ -22,6 +22,18 @@ const config = convict({
     default: 8080,
     env: 'PORT',
   },
+  cors: {
+    origin: {
+      doc: 'The origin for cors',
+      default: 'http://localhost:3000',
+      env: 'CLIENT_ORIGIN',
+    },
+    credentials: {
+      doc: 'Cors with credentials',
+      default: true,
+      env: 'CORS_CREDENTIALS',
+    },
+  },
 });
 
 const env = config.get('env');
