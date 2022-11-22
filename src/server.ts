@@ -1,6 +1,7 @@
 import fastifyCors from '@fastify/cors';
 import fastify from 'fastify';
 import config from './config';
+import { dbConnections } from './plugins';
 import rootRoutes from './routes';
 import type { FastifyInstance } from 'fastify';
 
@@ -12,6 +13,7 @@ const createServer = (): FastifyInstance => {
   // fastify ecosystem
   server.register(fastifyCors, corsConfig);
   // my plugins
+  server.register(dbConnections);
   // decorators
   // hooks
   // my services
