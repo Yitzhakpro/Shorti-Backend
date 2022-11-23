@@ -90,9 +90,9 @@ class ShortenerDAL {
 
   public async incrementShortLinkViews(linkId: string): Promise<void> {
     try {
-      await this.urlsRepository.increment({ linkId }, 'linkId', 1);
+      await this.urlsRepository.increment({ linkId }, 'views', 1);
     } catch (err) {
-      console.error('failed to increment short link views');
+      console.error('failed to increment short link views', err);
     }
   }
 }
