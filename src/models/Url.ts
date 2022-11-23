@@ -3,13 +3,13 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class Url {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  id!: string | undefined;
 
   @Column()
   fullUrl!: string;
 
   @Column()
-  linkID!: string;
+  linkId!: string;
 
   @Column()
   views!: number;
