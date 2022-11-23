@@ -5,7 +5,7 @@ import type { NewUrlEntity } from '../../models';
 import type { Repository } from 'typeorm';
 
 class ShortenerDAL {
-  urlsRepository: Repository<Url>;
+  private urlsRepository: Repository<Url>;
 
   constructor(urlsRepository: Repository<Url>) {
     this.urlsRepository = urlsRepository;
@@ -13,7 +13,8 @@ class ShortenerDAL {
 
   private async doesShortUrlExist(linkId: string): Promise<boolean> {
     try {
-      const urlObject = this.urlsRepository.findOneBy({ linkId });
+      const urlObject = await this.urlsRepository.findOneBy({ linkId });
+
       if (!urlObject) {
         return false;
       }
@@ -62,13 +63,14 @@ class ShortenerDAL {
     try {
       let linkAlreadyExist = true;
       let newLinkId = generateId(8);
-      do {
-        if (!this.doesShortUrlExist(newLinkId)) {
+      while (linkAlreadyExist) {
+        const shortUrlExist = await this.doesShortUrlExist(newLinkId);
+        if (!shortUrlExist) {
           linkAlreadyExist = false;
         } else {
           newLinkId = generateId(8);
         }
-      } while (linkAlreadyExist);
+      }
 
       const newUrlObject: NewUrlEntity = {
         fullUrl,
