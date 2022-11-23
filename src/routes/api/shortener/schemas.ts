@@ -3,9 +3,9 @@ import type { FastifySchema } from 'fastify';
 // get short url route
 const getShortUrlParams = {
   type: 'object',
-  required: ['linkID'],
+  required: ['linkId'],
   properties: {
-    linkID: { type: 'string' },
+    linkId: { type: 'string' },
   },
 };
 

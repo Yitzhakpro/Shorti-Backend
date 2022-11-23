@@ -1,3 +1,3 @@
 export interface IGetShortUrlParams {
-  linkID: string;
+  linkId: string;
 }

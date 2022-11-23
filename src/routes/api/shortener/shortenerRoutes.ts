@@ -1,15 +1,18 @@
+import { shortenerService } from '../../../services';
 import { getShortUrlSchema } from './schemas';
 import { IGetShortUrlParams } from './types';
 import type { FastifyPluginAsync } from 'fastify';
 
 const shortenerRoutes: FastifyPluginAsync = async (fastify, _options) => {
   fastify.get<{ Params: IGetShortUrlParams }>(
-    '/getShortUrl/:linkID',
+    '/getShortUrl/:linkId',
     { schema: getShortUrlSchema },
-    async (request, _reply) => {
-      const { linkID } = request.params;
+    async (request, reply) => {
+      const { linkId } = request.params;
 
-      return linkID;
+      const url = await shortenerService.getShortUrl(linkId);
+
+      return reply.redirect(url);
     }
   );
 };

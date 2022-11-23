@@ -1,3 +1,3 @@
-import ShortenerDAL from './shortenerDAL';
+import * as shortenerService from './shortenerService';
 
-export default ShortenerDAL;
+export { shortenerService };

@@ -11,6 +11,15 @@ class ShortenerDAL {
     this.urlsRepository = urlsRepository;
   }
 
+  private async doesShortUrlExist(linkId: string): Promise<boolean> {
+    const urlObject = this.urlsRepository.findOneBy({ linkId });
+    if (!urlObject) {
+      return false;
+    }
+
+    return true;
+  }
+
   public async getUrlById(id: string): Promise<Url | null> {
     const urlObject = await this.urlsRepository.findOneBy({ id });
 
@@ -33,8 +42,7 @@ class ShortenerDAL {
     let linkAlreadyExist = true;
     let newLinkId = generateId(8);
     do {
-      const urlObject = this.urlsRepository.findOneBy({ linkId: newLinkId });
-      if (!urlObject) {
+      if (!this.doesShortUrlExist(newLinkId)) {
         linkAlreadyExist = false;
       } else {
         newLinkId = generateId(8);
@@ -51,6 +59,14 @@ class ShortenerDAL {
     const createdUrl = await this.urlsRepository.save(newUrlObject);
 
     return createdUrl;
+  }
+
+  public async incrementShortLinkViews(linkId: string): Promise<void> {
+    try {
+      await this.urlsRepository.increment({ linkId }, 'linkId', 1);
+    } catch (err) {
+      console.error('failed to increment short link views');
+    }
   }
 }
 
