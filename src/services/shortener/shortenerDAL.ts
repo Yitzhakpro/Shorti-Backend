@@ -12,53 +12,78 @@ class ShortenerDAL {
   }
 
   private async doesShortUrlExist(linkId: string): Promise<boolean> {
-    const urlObject = this.urlsRepository.findOneBy({ linkId });
-    if (!urlObject) {
-      return false;
-    }
+    try {
+      const urlObject = this.urlsRepository.findOneBy({ linkId });
+      if (!urlObject) {
+        return false;
+      }
 
-    return true;
+      return true;
+    } catch (err) {
+      console.error(err);
+      throw new Error('Cant fetch url info');
+    }
   }
 
   public async getUrlById(id: string): Promise<Url | null> {
-    const urlObject = await this.urlsRepository.findOneBy({ id });
+    try {
+      const urlObject = await this.urlsRepository.findOneBy({ id });
 
-    return urlObject;
+      return urlObject;
+    } catch (err) {
+      console.error(err);
+      throw new Error('cant get url by id');
+    }
   }
 
   public async getUrlByLinkId(linkId: string): Promise<Url | null> {
-    const urlObject = await this.urlsRepository.findOneBy({ linkId });
+    try {
+      const urlObject = await this.urlsRepository.findOneBy({ linkId });
 
-    return urlObject;
+      return urlObject;
+    } catch (err) {
+      console.error(err);
+      throw new Error('cant get url by link id');
+    }
   }
 
   public async getAllUrlsCreatedByUser(userId: string): Promise<Url[]> {
-    const urlsByUser = await this.urlsRepository.findBy({ createdBy: userId });
+    try {
+      const urlsByUser = await this.urlsRepository.findBy({ createdBy: userId });
 
-    return urlsByUser;
+      return urlsByUser;
+    } catch (err) {
+      console.error(err);
+      throw new Error('cant get all urls by user');
+    }
   }
 
   public async createNewShortUrl(fullUrl: string, userId = 'Anonymous'): Promise<Url> {
-    let linkAlreadyExist = true;
-    let newLinkId = generateId(8);
-    do {
-      if (!this.doesShortUrlExist(newLinkId)) {
-        linkAlreadyExist = false;
-      } else {
-        newLinkId = generateId(8);
-      }
-    } while (linkAlreadyExist);
+    try {
+      let linkAlreadyExist = true;
+      let newLinkId = generateId(8);
+      do {
+        if (!this.doesShortUrlExist(newLinkId)) {
+          linkAlreadyExist = false;
+        } else {
+          newLinkId = generateId(8);
+        }
+      } while (linkAlreadyExist);
 
-    const newUrlObject: NewUrlEntity = {
-      fullUrl,
-      linkId: newLinkId,
-      views: 0,
-      createdBy: userId,
-    };
+      const newUrlObject: NewUrlEntity = {
+        fullUrl,
+        linkId: newLinkId,
+        views: 0,
+        createdBy: userId,
+      };
 
-    const createdUrl = await this.urlsRepository.save(newUrlObject);
+      const createdUrl = await this.urlsRepository.save(newUrlObject);
 
-    return createdUrl;
+      return createdUrl;
+    } catch (err) {
+      console.error(err);
+      throw new Error('Cant create url');
+    }
   }
 
   public async incrementShortLinkViews(linkId: string): Promise<void> {
