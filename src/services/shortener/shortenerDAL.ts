@@ -50,7 +50,7 @@ class ShortenerDAL {
 
   public async getAllUrlsCreatedByUser(userId: string): Promise<Url[]> {
     try {
-      const urlsByUser = await this.urlsRepository.findBy({ createdBy: userId });
+      const urlsByUser = await this.urlsRepository.findBy({ user: userId });
 
       return urlsByUser;
     } catch (err) {
@@ -76,7 +76,7 @@ class ShortenerDAL {
         fullUrl,
         linkId: newLinkId,
         views: 0,
-        createdBy: userId,
+        user: userId,
       };
 
       const createdUrl = await this.urlsRepository.save(newUrlObject);

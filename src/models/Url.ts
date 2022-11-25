@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity({ name: 'Urls' })
+@Entity({ name: 'urls' })
 export class Url {
   @PrimaryGeneratedColumn('uuid')
   id!: string | undefined;
@@ -15,5 +15,11 @@ export class Url {
   views!: number;
 
   @Column()
-  createdBy!: string;
+  user!: string;
+
+  @CreateDateColumn()
+  created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
 }
