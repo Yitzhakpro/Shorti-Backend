@@ -1,3 +1,5 @@
+import bcrypt from 'bcrypt';
+
 export const generateId = (length: number): string => {
   const numbers = '0123456789';
   const uppercaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -11,4 +13,15 @@ export const generateId = (length: number): string => {
   }
 
   return result;
+};
+
+export const hashString = async (text: string): Promise<string> => {
+  try {
+    const hashedString = bcrypt.hash(text, 10);
+
+    return hashedString;
+  } catch (err) {
+    console.error(err);
+    throw new Error('cant hash password');
+  }
 };
