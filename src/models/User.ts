@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity } from 'typeorm';
+import type { GetUserInfoReturn } from './types';
 
 @Entity({ name: 'users' })
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -19,4 +20,12 @@ export class User {
 
   @UpdateDateColumn()
   updated_at!: Date;
+
+  getUserInfo(): GetUserInfoReturn {
+    return {
+      email: this.email,
+      username: this.username,
+      password: this.password,
+    };
+  }
 }

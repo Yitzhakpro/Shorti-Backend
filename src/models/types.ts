@@ -1,6 +1,21 @@
-import { User } from './User';
-import type { Url } from './Url';
+// Url
+export interface NewUrlEntity {
+  fullUrl: string;
+  linkId: string;
+  views: number;
+  user: string;
+}
 
-export type NewUrlEntity = Omit<Url, 'id' | 'created_at' | 'updated_at'>;
+// User
 
-export type NewUserEntity = Omit<User, 'id' | 'created_at' | 'updated_at'>;
+export interface NewUserEntity {
+  email: string;
+  username: string;
+  password: string;
+}
+
+export interface GetUserInfoReturn {
+  email: string;
+  username: string;
+  password: string;
+}
