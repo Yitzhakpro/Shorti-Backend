@@ -17,5 +17,4 @@ export interface NewUserEntity {
 export interface GetUserInfoReturn {
   email: string;
   username: string;
-  password: string;
 }

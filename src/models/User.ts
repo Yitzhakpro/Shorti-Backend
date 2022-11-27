@@ -25,7 +25,6 @@ export class User extends BaseEntity {
     return {
       email: this.email,
       username: this.username,
-      password: this.password,
     };
   }
 }
