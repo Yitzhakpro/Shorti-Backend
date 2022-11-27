@@ -34,6 +34,27 @@ const config = convict({
       env: 'CORS_CREDENTIALS',
     },
   },
+  auth: {
+    token: {
+      cookie: {
+        cookieName: {
+          doc: 'The name of the cookie',
+          default: 'authToken',
+          env: 'AUTH_TOKEN_NAME',
+        },
+        signed: {
+          doc: 'Whether or not the cookie is signed',
+          default: false,
+          env: 'AUTH_TOKEN_IS_SIGNED',
+        },
+      },
+      secret: {
+        doc: 'secret of the token',
+        default: 'short_auth',
+        env: 'AUTH_TOKEN_SECRET',
+      },
+    },
+  },
   db: {
     postgres: {
       host: {
