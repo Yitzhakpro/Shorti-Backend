@@ -23,7 +23,7 @@ class AuthDAL {
 
       const createdUser = await this.usersRepository.save(newUser);
 
-      return createdUser.getUserInfo();
+      return createdUser.userInfo;
     } catch (err) {
       console.error(err);
       throw new Error('Cant create user');
@@ -37,7 +37,7 @@ class AuthDAL {
         return null;
       }
 
-      return user.getUserInfo();
+      return user.userInfo;
     } catch (err) {
       console.error(err);
       throw new Error('cant get user by id');
@@ -51,7 +51,7 @@ class AuthDAL {
         return null;
       }
 
-      return user.getUserInfo();
+      return user.userInfo;
     } catch (err) {
       console.error(err);
       throw new Error('cant get user by email');
@@ -65,7 +65,7 @@ class AuthDAL {
         return null;
       }
 
-      return user.getUserInfo();
+      return user.userInfo;
     } catch (err) {
       console.error(err);
       throw new Error('cant get user by username');

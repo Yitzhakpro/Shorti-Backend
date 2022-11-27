@@ -21,7 +21,7 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updated_at!: Date;
 
-  getUserInfo(): GetUserInfoReturn {
+  public get userInfo(): GetUserInfoReturn {
     return {
       email: this.email,
       username: this.username,

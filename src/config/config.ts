@@ -25,7 +25,7 @@ const config = convict({
   cors: {
     origin: {
       doc: 'The origin for cors',
-      default: 'http://localhost:3000',
+      default: 'http://127.0.0.1:5173',
       env: 'CLIENT_ORIGIN',
     },
     credentials: {
