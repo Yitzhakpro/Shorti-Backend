@@ -1,14 +1,14 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import config from '../config';
-import { Url } from '../models';
+import { Url, User } from '../models';
 
 const postgresConfig = config.get('db.postgres');
 
 const postgresConnection = new DataSource({
   ...postgresConfig,
   type: 'postgres',
-  entities: [Url],
+  entities: [Url, User],
   synchronize: false,
   logging: false,
 });

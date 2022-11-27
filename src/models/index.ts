@@ -1,4 +1,5 @@
 import { Url } from './Url';
+import { User } from './User';
 
-export { Url };
+export { Url, User };
 export * from './types';

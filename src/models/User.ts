@@ -1,21 +1,18 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity({ name: 'urls' })
-export class Url {
+@Entity({ name: 'users' })
+export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
   @Column()
-  fullUrl!: string;
+  email!: string;
 
   @Column()
-  linkId!: string;
+  username!: string;
 
   @Column()
-  views!: number;
-
-  @Column()
-  user!: string;
+  password!: string;
 
   @CreateDateColumn()
   created_at!: Date;
