@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BaseEntity,
+  BeforeInsert,
+} from 'typeorm';
+import { hashString } from '../utils';
 import type { GetUserInfoReturn } from './types';
 
 @Entity({ name: 'users' })
@@ -21,7 +30,12 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updated_at!: Date;
 
-  public get userInfo(): GetUserInfoReturn {
+  @BeforeInsert()
+  async onCreateUser(): Promise<void> {
+    this.password = await hashString(this.password);
+  }
+
+  getUserInfo(): GetUserInfoReturn {
     return {
       email: this.email,
       username: this.username,

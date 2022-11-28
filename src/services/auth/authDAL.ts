@@ -1,29 +1,23 @@
-import { postgresConnection } from '../../connections';
-import { NewUserEntity, User } from '../../models';
-import { hashString } from '../../utils';
+import { User } from '../../models';
 import type { GetUserInfoReturn } from '../../models';
-import type { Repository } from 'typeorm';
 
 class AuthDAL {
-  private usersRepository: Repository<User>;
+  private userEntity: typeof User;
 
-  constructor(usersRepository: Repository<User>) {
-    this.usersRepository = usersRepository;
+  constructor(userEntity: typeof User) {
+    this.userEntity = userEntity;
   }
 
   public async createUser(email: string, username: string, password: string): Promise<GetUserInfoReturn> {
     try {
-      const hashedPassword = await hashString(password);
+      const newUser = new this.userEntity();
+      newUser.email = email.toLowerCase();
+      newUser.username = username;
+      newUser.password = password;
 
-      const newUser: NewUserEntity = {
-        email: email.toLowerCase(),
-        username,
-        password: hashedPassword,
-      };
+      const createdUser = await newUser.save();
 
-      const createdUser = await this.usersRepository.save(newUser);
-
-      return createdUser.userInfo;
+      return createdUser.getUserInfo();
     } catch (err) {
       console.error(err);
       throw new Error('Cant create user');
@@ -32,12 +26,12 @@ class AuthDAL {
 
   public async getUserById(id: string): Promise<GetUserInfoReturn | null> {
     try {
-      const user = await this.usersRepository.findOneBy({ id });
+      const user = await this.userEntity.findOneBy({ id });
       if (!user) {
         return null;
       }
 
-      return user.userInfo;
+      return user.getUserInfo();
     } catch (err) {
       console.error(err);
       throw new Error('cant get user by id');
@@ -46,12 +40,12 @@ class AuthDAL {
 
   public async getUserByEmail(email: string): Promise<GetUserInfoReturn | null> {
     try {
-      const user = await this.usersRepository.findOneBy({ email });
+      const user = await this.userEntity.findOneBy({ email });
       if (!user) {
         return null;
       }
 
-      return user.userInfo;
+      return user.getUserInfo();
     } catch (err) {
       console.error(err);
       throw new Error('cant get user by email');
@@ -60,12 +54,12 @@ class AuthDAL {
 
   public async getUserByUsername(username: string): Promise<GetUserInfoReturn | null> {
     try {
-      const user = await this.usersRepository.findOneBy({ username });
+      const user = await this.userEntity.findOneBy({ username });
       if (!user) {
         return null;
       }
 
-      return user.userInfo;
+      return user.getUserInfo();
     } catch (err) {
       console.error(err);
       throw new Error('cant get user by username');
@@ -73,6 +67,4 @@ class AuthDAL {
   }
 }
 
-const urlsRepository = postgresConnection.getRepository(User);
-
-export default new AuthDAL(urlsRepository);
+export default new AuthDAL(User);
