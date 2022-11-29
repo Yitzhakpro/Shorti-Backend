@@ -25,7 +25,7 @@ const config = convict({
   cors: {
     origin: {
       doc: 'The origin for cors',
-      default: 'http://127.0.0.1:5173',
+      default: 'http://localhost:5173',
       env: 'CLIENT_ORIGIN',
     },
     credentials: {
@@ -35,7 +35,7 @@ const config = convict({
     },
   },
   auth: {
-    token: {
+    fastifyJwtOptions: {
       cookie: {
         cookieName: {
           doc: 'The name of the cookie',
@@ -52,6 +52,29 @@ const config = convict({
         doc: 'secret of the token',
         default: 'short_auth',
         env: 'AUTH_TOKEN_SECRET',
+      },
+    },
+    tokenOptions: {
+      expiresIn: {
+        doc: 'expire of jwt token',
+        default: '1d',
+      },
+    },
+    cookieOptions: {
+      httpOnly: {
+        doc: 'http only cookie',
+        default: true,
+      },
+      path: {
+        doc: 'path of cookie',
+        default: '/',
+      },
+      sameSite: {
+        default: true,
+      },
+      maxAge: {
+        doc: 'max age of cookie',
+        default: 86_400, // 1 day
       },
     },
   },

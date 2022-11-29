@@ -8,7 +8,7 @@ import rootRoutes from './routes';
 import type { FastifyInstance } from 'fastify';
 
 const corsConfig = config.get('cors');
-const tokenConfig = config.get('auth.token');
+const fastifyJwtConfig = config.get('auth.fastifyJwtOptions');
 
 const createServer = (): FastifyInstance => {
   const server = fastify({ logger: true });
@@ -16,7 +16,7 @@ const createServer = (): FastifyInstance => {
   // fastify ecosystem
   server.register(fastifyCors, corsConfig);
   server.register(fastifyCookie);
-  server.register(fastifyJwt, tokenConfig);
+  server.register(fastifyJwt, fastifyJwtConfig);
   // my plugins
   server.register(dbConnections);
   // decorators
