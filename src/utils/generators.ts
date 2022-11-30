@@ -15,9 +15,9 @@ export const generateId = (length: number): string => {
   return result;
 };
 
-export const hashString = async (text: string): Promise<string> => {
+export const hashString = async (text: string, rounds = 10): Promise<string> => {
   try {
-    const hashedString = bcrypt.hash(text, 10);
+    const hashedString = bcrypt.hash(text, rounds);
 
     return hashedString;
   } catch (err) {

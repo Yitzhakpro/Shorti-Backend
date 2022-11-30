@@ -1,7 +1,7 @@
 import config from '../../../config';
 import { authService } from '../../../services';
-import { registerSchema } from './schemas';
-import type { RegisterBody } from './types';
+import { loginSchema, registerSchema } from './schemas';
+import type { LoginBody, RegisterBody } from './types';
 import type { FastifyPluginAsync } from 'fastify';
 
 const cookieName = config.get('auth.fastifyJwtOptions.cookie.cookieName');
@@ -18,6 +18,15 @@ const authRoutes: FastifyPluginAsync = async (fastify, _options) => {
     } catch (_err) {
       throw new Error('user is not logged in');
     }
+  });
+
+  fastify.post<{ Body: LoginBody }>('/login', { schema: loginSchema }, async (request, reply) => {
+    const { email, password } = request.body;
+
+    const loggedUser = await authService.login(email, password);
+    const authToken = fastify.jwt.sign(loggedUser, tokenOptions);
+
+    return reply.cookie(cookieName, authToken, cookieOptions).send(loggedUser);
   });
 
   fastify.post<{ Body: RegisterBody }>('/register', { schema: registerSchema }, async (request, reply) => {

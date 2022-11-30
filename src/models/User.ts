@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import {
   Entity,
   Column,
@@ -33,6 +34,16 @@ export class User extends BaseEntity {
   @BeforeInsert()
   async onCreateUser(): Promise<void> {
     this.password = await hashString(this.password);
+  }
+
+  async comparePassword(triedPassword: string): Promise<boolean> {
+    try {
+      const isCorrectPassword = await bcrypt.compare(triedPassword, this.password);
+
+      return isCorrectPassword;
+    } catch (err) {
+      throw new Error('wrong credentials');
+    }
   }
 
   getUserInfo(): GetUserInfoReturn {

@@ -1,5 +1,4 @@
 import { User } from '../../models';
-import type { GetUserInfoReturn } from '../../models';
 
 class AuthDAL {
   private userEntity: typeof User;
@@ -8,7 +7,7 @@ class AuthDAL {
     this.userEntity = userEntity;
   }
 
-  public async createUser(email: string, username: string, password: string): Promise<GetUserInfoReturn> {
+  public async createUser(email: string, username: string, password: string): Promise<User> {
     try {
       const newUser = new this.userEntity();
       newUser.email = email.toLowerCase();
@@ -17,49 +16,49 @@ class AuthDAL {
 
       const createdUser = await newUser.save();
 
-      return createdUser.getUserInfo();
+      return createdUser;
     } catch (err) {
       console.error(err);
       throw new Error('Cant create user');
     }
   }
 
-  public async getUserById(id: string): Promise<GetUserInfoReturn | null> {
+  public async getUserById(id: string): Promise<User | null> {
     try {
       const user = await this.userEntity.findOneBy({ id });
       if (!user) {
         return null;
       }
 
-      return user.getUserInfo();
+      return user;
     } catch (err) {
       console.error(err);
       throw new Error('cant get user by id');
     }
   }
 
-  public async getUserByEmail(email: string): Promise<GetUserInfoReturn | null> {
+  public async getUserByEmail(email: string): Promise<User | null> {
     try {
       const user = await this.userEntity.findOneBy({ email });
       if (!user) {
         return null;
       }
 
-      return user.getUserInfo();
+      return user;
     } catch (err) {
       console.error(err);
       throw new Error('cant get user by email');
     }
   }
 
-  public async getUserByUsername(username: string): Promise<GetUserInfoReturn | null> {
+  public async getUserByUsername(username: string): Promise<User | null> {
     try {
       const user = await this.userEntity.findOneBy({ username });
       if (!user) {
         return null;
       }
 
-      return user.getUserInfo();
+      return user;
     } catch (err) {
       console.error(err);
       throw new Error('cant get user by username');
