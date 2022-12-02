@@ -1,4 +1,4 @@
 import { authService } from './auth';
-import { shortenerService } from './shortener';
+import { linksService } from './links';
 
-export { authService, shortenerService };
+export { authService, linksService };

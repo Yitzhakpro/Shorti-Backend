@@ -1,16 +1,16 @@
-import { shortenerService } from '../../../services';
+import { linksService } from '../../../services';
 import { getShortUrlSchema, createShortUrlSchema } from './schemas';
 import { IGetShortUrlParams, ICreateShortUrlBody } from './types';
 import type { FastifyPluginAsync } from 'fastify';
 
-const shortenerRoutes: FastifyPluginAsync = async (fastify, _options) => {
+const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
   fastify.get<{ Params: IGetShortUrlParams }>(
     '/getShortUrl/:linkId',
     { schema: getShortUrlSchema },
     async (request, reply) => {
       const { linkId } = request.params;
 
-      const url = await shortenerService.getShortUrl(linkId);
+      const url = await linksService.getShortUrl(linkId);
 
       return reply.redirect(url);
     }
@@ -22,11 +22,11 @@ const shortenerRoutes: FastifyPluginAsync = async (fastify, _options) => {
     async (request, _reply) => {
       const { fullUrl } = request.body;
 
-      const urlObject = await shortenerService.createShortUrl(fullUrl);
+      const urlObject = await linksService.createShortUrl(fullUrl);
 
       return urlObject;
     }
   );
 };
 
-export default shortenerRoutes;
+export default linksRoutes;
