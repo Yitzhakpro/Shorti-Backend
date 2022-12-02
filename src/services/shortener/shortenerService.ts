@@ -7,7 +7,7 @@ export const getShortUrl = async (linkId: string): Promise<string> => {
     throw new Error('url do not exist');
   }
 
-  await ShortenerDAL.incrementShortLinkViews(linkId);
+  await ShortenerDAL.incrementShortLinkViews(linkId, urlObject.views);
 
   return urlObject.fullUrl;
 };

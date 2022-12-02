@@ -1,9 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity } from 'typeorm';
 
 @Entity({ name: 'urls' })
-export class Url {
+export class Url extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id!: string | undefined;
+  id!: string;
 
   @Column()
   fullUrl!: string;

@@ -1,3 +1,4 @@
+import { authService } from './auth';
 import { shortenerService } from './shortener';
 
-export { shortenerService };
+export { authService, shortenerService };

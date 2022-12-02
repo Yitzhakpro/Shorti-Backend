@@ -1,19 +1,16 @@
-import { postgresConnection } from '../../connections';
 import { Url } from '../../models';
 import { generateId } from '../../utils';
-import type { NewUrlEntity } from '../../models';
-import type { Repository } from 'typeorm';
 
 class ShortenerDAL {
-  private urlsRepository: Repository<Url>;
+  private urlEntity: typeof Url;
 
-  constructor(urlsRepository: Repository<Url>) {
-    this.urlsRepository = urlsRepository;
+  constructor(urlEntity: typeof Url) {
+    this.urlEntity = urlEntity;
   }
 
   private async doesShortUrlExist(linkId: string): Promise<boolean> {
     try {
-      const urlObject = await this.urlsRepository.findOneBy({ linkId });
+      const urlObject = await this.urlEntity.findOneBy({ linkId });
 
       if (!urlObject) {
         return false;
@@ -28,7 +25,7 @@ class ShortenerDAL {
 
   public async getUrlById(id: string): Promise<Url | null> {
     try {
-      const urlObject = await this.urlsRepository.findOneBy({ id });
+      const urlObject = await this.urlEntity.findOneBy({ id });
 
       return urlObject;
     } catch (err) {
@@ -39,7 +36,7 @@ class ShortenerDAL {
 
   public async getUrlByLinkId(linkId: string): Promise<Url | null> {
     try {
-      const urlObject = await this.urlsRepository.findOneBy({ linkId });
+      const urlObject = await this.urlEntity.findOneBy({ linkId });
 
       return urlObject;
     } catch (err) {
@@ -50,7 +47,7 @@ class ShortenerDAL {
 
   public async getAllUrlsCreatedByUser(userId: string): Promise<Url[]> {
     try {
-      const urlsByUser = await this.urlsRepository.findBy({ user: userId });
+      const urlsByUser = await this.urlEntity.findBy({ user: userId });
 
       return urlsByUser;
     } catch (err) {
@@ -72,14 +69,13 @@ class ShortenerDAL {
         }
       }
 
-      const newUrlObject: NewUrlEntity = {
-        fullUrl,
-        linkId: newLinkId,
-        views: 0,
-        user: userId,
-      };
+      const newUrl = new this.urlEntity();
+      newUrl.fullUrl = fullUrl;
+      newUrl.linkId = newLinkId;
+      newUrl.views = 0;
+      newUrl.user = userId;
 
-      const createdUrl = await this.urlsRepository.save(newUrlObject);
+      const createdUrl = await newUrl.save();
 
       return createdUrl;
     } catch (err) {
@@ -88,15 +84,13 @@ class ShortenerDAL {
     }
   }
 
-  public async incrementShortLinkViews(linkId: string): Promise<void> {
+  public async incrementShortLinkViews(linkId: string, currentViews: number): Promise<void> {
     try {
-      await this.urlsRepository.increment({ linkId }, 'views', 1);
+      await this.urlEntity.update({ linkId }, { views: currentViews + 1 });
     } catch (err) {
       console.error('failed to increment short link views', err);
     }
   }
 }
 
-const urlsRepository = postgresConnection.getRepository(Url);
-
-export default new ShortenerDAL(urlsRepository);
+export default new ShortenerDAL(Url);
