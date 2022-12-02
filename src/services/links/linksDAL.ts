@@ -1,7 +1,7 @@
 import { Url } from '../../models';
 import { generateId } from '../../utils';
 
-class ShortenerDAL {
+class LinksDAL {
   private urlEntity: typeof Url;
 
   constructor(urlEntity: typeof Url) {
@@ -93,4 +93,4 @@ class ShortenerDAL {
   }
 }
 
-export default new ShortenerDAL(Url);
+export default new LinksDAL(Url);
