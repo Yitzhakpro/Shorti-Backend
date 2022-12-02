@@ -3,7 +3,7 @@ import fastifyCors from '@fastify/cors';
 import fastifyJwt from '@fastify/jwt';
 import fastify from 'fastify';
 import config from './config';
-import { dbConnections } from './plugins';
+import { dbConnections, verifyUser } from './plugins';
 import rootRoutes from './routes';
 import type { FastifyInstance } from 'fastify';
 
@@ -19,6 +19,7 @@ const createServer = (): FastifyInstance => {
   server.register(fastifyJwt, fastifyJwtConfig);
   // my plugins
   server.register(dbConnections);
+  server.register(verifyUser);
   // decorators
   // hooks
   // my services

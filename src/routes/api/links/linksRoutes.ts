@@ -18,7 +18,7 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
 
   fastify.post<{ Body: ICreateShortUrlBody }>(
     '/createShortUrl',
-    { schema: createShortUrlSchema },
+    { schema: createShortUrlSchema, preHandler: fastify.verifyUser },
     async (request, _reply) => {
       const { fullUrl } = request.body;
 
