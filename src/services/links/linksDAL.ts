@@ -56,7 +56,7 @@ class LinksDAL {
     }
   }
 
-  public async createNewShortUrl(fullUrl: string, userId = 'Anonymous'): Promise<Url> {
+  public async createNewShortUrl(fullUrl: string, userId: string): Promise<Url> {
     try {
       let linkAlreadyExist = true;
       let newLinkId = generateId(8);

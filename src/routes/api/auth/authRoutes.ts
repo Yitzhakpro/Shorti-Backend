@@ -11,7 +11,7 @@ const cookieOptions = config.get('auth.cookieOptions');
 const authRoutes: FastifyPluginAsync = async (fastify, _options) => {
   fastify.get('/isLoggedIn', async (request, reply) => {
     try {
-      const decodedToken = (await request.jwtVerify()) as { email: string; username: string };
+      const decodedToken = (await request.jwtVerify()) as { id: string; email: string; username: string };
       const user = await authService.isLoggedIn(decodedToken.email);
 
       return reply.send(user);

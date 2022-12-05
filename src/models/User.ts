@@ -7,8 +7,10 @@ import {
   UpdateDateColumn,
   BaseEntity,
   BeforeInsert,
+  OneToMany,
 } from 'typeorm';
 import { hashString } from '../utils';
+import { Url } from './Url';
 import type { GetUserInfoReturn } from './types';
 
 @Entity({ name: 'users' })
@@ -24,6 +26,9 @@ export class User extends BaseEntity {
 
   @Column()
   password!: string;
+
+  @OneToMany(() => Url, (url) => url.user)
+  urls!: Url[];
 
   @CreateDateColumn()
   created_at!: Date;
@@ -48,6 +53,7 @@ export class User extends BaseEntity {
 
   getUserInfo(): GetUserInfoReturn {
     return {
+      id: this.id,
       email: this.email,
       username: this.username,
     };

@@ -18,11 +18,12 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
 
   fastify.post<{ Body: ICreateShortUrlBody }>(
     '/createShortUrl',
-    { schema: createShortUrlSchema },
+    { schema: createShortUrlSchema, preHandler: fastify.verifyUser },
     async (request, _reply) => {
       const { fullUrl } = request.body;
+      const decodedToken = (await request.jwtVerify()) as { id: string; email: string; username: string };
 
-      const urlObject = await linksService.createShortUrl(fullUrl);
+      const urlObject = await linksService.createShortUrl(fullUrl, decodedToken.id);
 
       return urlObject;
     }

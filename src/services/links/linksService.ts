@@ -12,8 +12,8 @@ export const getShortUrl = async (linkId: string): Promise<string> => {
   return urlObject.fullUrl;
 };
 
-export const createShortUrl = async (fullUrl: string): Promise<Url> => {
-  const urlObject = await LinksDAL.createNewShortUrl(fullUrl);
+export const createShortUrl = async (fullUrl: string, userId: string): Promise<Url> => {
+  const urlObject = await LinksDAL.createNewShortUrl(fullUrl, userId);
 
   return urlObject;
 };
