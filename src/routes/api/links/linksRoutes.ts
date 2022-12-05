@@ -16,6 +16,14 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
     }
   );
 
+  fastify.get('/getUrls', async (request, _reply) => {
+    const decodedToken = (await request.jwtVerify()) as { id: string; email: string; username: string };
+
+    const allUrls = await linksService.getUrls(decodedToken.id);
+
+    return allUrls;
+  });
+
   fastify.post<{ Body: ICreateShortUrlBody }>(
     '/createShortUrl',
     { schema: createShortUrlSchema, preHandler: fastify.verifyUser },

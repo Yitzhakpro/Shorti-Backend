@@ -23,8 +23,11 @@ export class Url extends BaseEntity {
   @Column()
   views!: number;
 
-  @ManyToOne(() => User, (user) => user.urls)
-  user!: string;
+  @Column({ nullable: true })
+  userId!: string;
+
+  @ManyToOne(() => User)
+  user!: User;
 
   @CreateDateColumn()
   created_at!: Date;

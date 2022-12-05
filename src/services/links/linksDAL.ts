@@ -45,9 +45,9 @@ class LinksDAL {
     }
   }
 
-  public async getAllUrlsCreatedByUser(userId: string): Promise<Url[]> {
+  public async getUrlsByUser(userId: string): Promise<Url[]> {
     try {
-      const urlsByUser = await this.urlEntity.findBy({ user: userId });
+      const urlsByUser = await this.urlEntity.findBy({ userId });
 
       return urlsByUser;
     } catch (err) {
@@ -73,7 +73,7 @@ class LinksDAL {
       newUrl.fullUrl = fullUrl;
       newUrl.linkId = newLinkId;
       newUrl.views = 0;
-      newUrl.user = userId;
+      newUrl.userId = userId;
 
       const createdUrl = await newUrl.save();
 
