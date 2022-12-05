@@ -53,6 +53,7 @@ export class User extends BaseEntity {
 
   getUserInfo(): GetUserInfoReturn {
     return {
+      id: this.id,
       email: this.email,
       username: this.username,
     };

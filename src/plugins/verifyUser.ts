@@ -9,6 +9,7 @@ declare module 'fastify' {
 }
 
 const userDecodedSchema = yup.object().shape({
+  id: yup.string().required(),
   email: yup.string().required(),
   username: yup.string().required(),
   iat: yup.number().required(),
