@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BaseEntity,
+  ManyToOne,
+} from 'typeorm';
+import { User } from './User';
 
 @Entity({ name: 'urls' })
 export class Url extends BaseEntity {
@@ -14,7 +23,7 @@ export class Url extends BaseEntity {
   @Column()
   views!: number;
 
-  @Column()
+  @ManyToOne(() => User, (user) => user.urls)
   user!: string;
 
   @CreateDateColumn()
