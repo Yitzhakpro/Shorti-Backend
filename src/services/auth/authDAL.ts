@@ -1,3 +1,4 @@
+import { validate } from 'class-validator';
 import { User } from '../../models';
 
 class AuthDAL {
@@ -13,6 +14,11 @@ class AuthDAL {
       newUser.email = email.toLowerCase();
       newUser.username = username;
       newUser.password = password;
+
+      const validationErrors = await validate(newUser);
+      if (validationErrors.length > 0) {
+        throw new Error('validation failed');
+      }
 
       const createdUser = await newUser.save();
 
