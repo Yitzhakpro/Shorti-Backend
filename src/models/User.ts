@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { IsEmail, MinLength, MaxLength } from 'class-validator';
 import {
   Entity,
   Column,
@@ -19,12 +20,17 @@ export class User extends BaseEntity {
   id!: string;
 
   @Column({ unique: true })
+  @IsEmail()
   email!: string;
 
   @Column({ unique: true })
+  @MinLength(1)
+  @MaxLength(20)
   username!: string;
 
   @Column()
+  @MinLength(8)
+  @MaxLength(16)
   password!: string;
 
   @OneToMany(() => Url, (url) => url.user)

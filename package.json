@@ -37,6 +37,7 @@
     "@fastify/jwt": "^6.4.0",
     "@types/bcrypt": "^5.0.0",
     "bcrypt": "^5.1.0",
+    "class-validator": "^0.13.2",
     "convict": "^6.2.3",
     "dotenv": "^16.0.3",
     "fastify": "^4.10.0",
