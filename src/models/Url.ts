@@ -8,6 +8,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { User } from './User';
+import type { GetUrlInfoReturn } from './types';
 
 @Entity({ name: 'urls' })
 export class Url extends BaseEntity {
@@ -23,12 +24,25 @@ export class Url extends BaseEntity {
   @Column()
   views!: number;
 
-  @ManyToOne(() => User, (user) => user.urls)
-  user!: string;
+  @Column({ nullable: true })
+  userId!: string;
+
+  @ManyToOne(() => User)
+  user!: User;
 
   @CreateDateColumn()
   created_at!: Date;
 
   @UpdateDateColumn()
   updated_at!: Date;
+
+  getUrlInfo(): GetUrlInfoReturn {
+    return {
+      id: this.id,
+      fullUrl: this.fullUrl,
+      linkId: this.linkId,
+      views: this.views,
+      createdAt: this.created_at,
+    };
+  }
 }

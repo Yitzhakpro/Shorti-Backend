@@ -1,4 +1,4 @@
-import { Url } from '../../models';
+import { GetUrlInfoReturn, Url } from '../../models';
 import { generateId } from '../../utils';
 
 class LinksDAL {
@@ -45,9 +45,9 @@ class LinksDAL {
     }
   }
 
-  public async getAllUrlsCreatedByUser(userId: string): Promise<Url[]> {
+  public async getUrlsByUser(userId: string): Promise<Url[]> {
     try {
-      const urlsByUser = await this.urlEntity.findBy({ user: userId });
+      const urlsByUser = await this.urlEntity.findBy({ userId });
 
       return urlsByUser;
     } catch (err) {
@@ -56,7 +56,7 @@ class LinksDAL {
     }
   }
 
-  public async createNewShortUrl(fullUrl: string, userId: string): Promise<Url> {
+  public async createNewShortUrl(fullUrl: string, userId: string): Promise<GetUrlInfoReturn> {
     try {
       let linkAlreadyExist = true;
       let newLinkId = generateId(8);
@@ -73,11 +73,11 @@ class LinksDAL {
       newUrl.fullUrl = fullUrl;
       newUrl.linkId = newLinkId;
       newUrl.views = 0;
-      newUrl.user = userId;
+      newUrl.userId = userId;
 
       const createdUrl = await newUrl.save();
 
-      return createdUrl;
+      return createdUrl.getUrlInfo();
     } catch (err) {
       console.error(err);
       throw new Error('Cant create url');

@@ -1,5 +1,5 @@
 import LinksDAL from './linksDAL';
-import type { Url } from '../../models';
+import type { GetUrlInfoReturn } from '../../models';
 
 export const getShortUrl = async (linkId: string): Promise<string> => {
   const urlObject = await LinksDAL.getUrlByLinkId(linkId);
@@ -12,7 +12,14 @@ export const getShortUrl = async (linkId: string): Promise<string> => {
   return urlObject.fullUrl;
 };
 
-export const createShortUrl = async (fullUrl: string, userId: string): Promise<Url> => {
+export const getUrls = async (userId: string): Promise<GetUrlInfoReturn[]> => {
+  const urls = await LinksDAL.getUrlsByUser(userId);
+  const urlsInfo = urls.map((url) => url.getUrlInfo());
+
+  return urlsInfo;
+};
+
+export const createShortUrl = async (fullUrl: string, userId: string): Promise<GetUrlInfoReturn> => {
   const urlObject = await LinksDAL.createNewShortUrl(fullUrl, userId);
 
   return urlObject;
