@@ -1,3 +1,4 @@
+import { IsUrl } from 'class-validator';
 import {
   Entity,
   Column,
@@ -16,6 +17,7 @@ export class Url extends BaseEntity {
   id!: string;
 
   @Column()
+  @IsUrl({ protocols: ['http', 'https'] })
   fullUrl!: string;
 
   @Column()

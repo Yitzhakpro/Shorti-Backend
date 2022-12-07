@@ -1,5 +1,7 @@
+import { validate } from 'class-validator';
 import { GetUrlInfoReturn, Url } from '../../models';
 import { generateId } from '../../utils';
+import { makeUrlValid } from './utils';
 
 class LinksDAL {
   private urlEntity: typeof Url;
@@ -70,10 +72,15 @@ class LinksDAL {
       }
 
       const newUrl = new this.urlEntity();
-      newUrl.fullUrl = fullUrl;
+      newUrl.fullUrl = makeUrlValid(fullUrl);
       newUrl.linkId = newLinkId;
       newUrl.views = 0;
       newUrl.userId = userId;
+
+      const validationErrors = await validate(newUrl);
+      if (validationErrors.length > 0) {
+        throw new Error('url validation error');
+      }
 
       const createdUrl = await newUrl.save();
 
