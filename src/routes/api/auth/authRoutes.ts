@@ -37,6 +37,10 @@ const authRoutes: FastifyPluginAsync = async (fastify, _options) => {
 
     return reply.cookie(cookieName, authToken, cookieOptions).send(createdUser);
   });
+
+  fastify.post('/logout', async (_request, reply) => {
+    return reply.clearCookie(cookieName).send('Ok');
+  });
 };
 
 export default authRoutes;
