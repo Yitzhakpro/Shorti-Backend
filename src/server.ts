@@ -3,6 +3,7 @@ import fastifyCors from '@fastify/cors';
 import fastifyJwt from '@fastify/jwt';
 import fastify from 'fastify';
 import config from './config';
+import { fastifyErrorHandler } from './errorHandler';
 import { dbConnections, verifyUser } from './plugins';
 import rootRoutes from './routes';
 import type { FastifyInstance } from 'fastify';
@@ -24,6 +25,8 @@ const createServer = (): FastifyInstance => {
   // hooks
   // my services
   server.register(rootRoutes);
+
+  server.setErrorHandler(fastifyErrorHandler);
 
   return server;
 };
