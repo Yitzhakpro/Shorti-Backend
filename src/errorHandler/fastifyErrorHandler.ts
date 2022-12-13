@@ -1,23 +1,17 @@
 import ErrorHandler from './errorHandler';
-import { BaseError, HttpStatusCode } from './errors';
+import { BaseError } from './errors';
 import type { FastifyError, FastifyRequest, FastifyReply } from 'fastify';
 
 const fastifyErrorHandler = (error: FastifyError | BaseError | Error, request: FastifyRequest, reply: FastifyReply) => {
-  if (ErrorHandler.isFastifyError(error)) {
+  const { statusCode, message, metadata } = ErrorHandler.getErrorClientInfo(error);
+
+  if (ErrorHandler.isFastifyValidationError(error) || ErrorHandler.isTrustedError(error)) {
     ErrorHandler.handleError(error);
 
-    return reply.status(HttpStatusCode.BAD_REQUEST).send(error.validation);
+    return reply.status(statusCode).send({ message, metadata });
   }
 
-  if (ErrorHandler.isTrustedError(error)) {
-    const { httpCode, message } = error;
-
-    ErrorHandler.handleError(error);
-
-    return reply.status(httpCode).send(message);
-  }
-
-  return reply.status(500).send(error.message);
+  return reply.status(statusCode).send({ message, metadata });
 };
 
 export default fastifyErrorHandler;
