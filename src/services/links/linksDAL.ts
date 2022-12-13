@@ -1,4 +1,5 @@
 import { validate } from 'class-validator';
+import { BadRequestError, InternalServerError } from '../../errorHandler';
 import { GetUrlInfoReturn, Url } from '../../models';
 import { generateId } from '../../utils';
 import { makeUrlValid } from './utils';
@@ -19,9 +20,8 @@ class LinksDAL {
       }
 
       return true;
-    } catch (err) {
-      console.error(err);
-      throw new Error('Cant fetch url info');
+    } catch (error) {
+      throw new InternalServerError('linksDAL', "Can't determine if url exists", { linkId, error });
     }
   }
 
@@ -30,9 +30,8 @@ class LinksDAL {
       const urlObject = await this.urlEntity.findOneBy({ id });
 
       return urlObject;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get url by id');
+    } catch (error) {
+      throw new InternalServerError('linksDAL', "Can't get url by id", { id, error });
     }
   }
 
@@ -41,9 +40,8 @@ class LinksDAL {
       const urlObject = await this.urlEntity.findOneBy({ linkId });
 
       return urlObject;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get url by link id');
+    } catch (error) {
+      throw new InternalServerError('linksDAL', "Can't get url by link id", { linkId, error });
     }
   }
 
@@ -52,9 +50,8 @@ class LinksDAL {
       const urlsByUser = await this.urlEntity.findBy({ userId });
 
       return urlsByUser;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get all urls by user');
+    } catch (error) {
+      throw new InternalServerError('linksDAL', "Can't get url by user id", { userId, error });
     }
   }
 
@@ -79,23 +76,22 @@ class LinksDAL {
 
       const validationErrors = await validate(newUrl);
       if (validationErrors.length > 0) {
-        throw new Error('url validation error');
+        throw new BadRequestError('linksDAL', 'Bad new url parameters', { validationErrors });
       }
 
       const createdUrl = await newUrl.save();
 
       return createdUrl.getUrlInfo();
-    } catch (err) {
-      console.error(err);
-      throw new Error('Cant create url');
+    } catch (error) {
+      throw new InternalServerError('linksDAL', "Can't create a new short url", { fullUrl, userId, error });
     }
   }
 
   public async incrementShortLinkViews(linkId: string, currentViews: number): Promise<void> {
     try {
       await this.urlEntity.update({ linkId }, { views: currentViews + 1 });
-    } catch (err) {
-      console.error('failed to increment short link views', err);
+    } catch (error) {
+      console.error("Can't increment link views");
     }
   }
 }

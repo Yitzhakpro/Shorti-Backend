@@ -16,7 +16,7 @@ const authRoutes: FastifyPluginAsync = async (fastify, _options) => {
 
       return reply.send(user);
     } catch (_err) {
-      throw new Error('user is not logged in');
+      return reply.send(null);
     }
   });
 

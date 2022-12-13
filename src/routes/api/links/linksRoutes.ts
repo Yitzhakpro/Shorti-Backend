@@ -16,7 +16,7 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
     }
   );
 
-  fastify.get('/getUrls', async (request, _reply) => {
+  fastify.get('/getUrls', { preHandler: fastify.verifyUser }, async (request, _reply) => {
     const decodedToken = (await request.jwtVerify()) as { id: string; email: string; username: string };
 
     const allUrls = await linksService.getUrls(decodedToken.id);

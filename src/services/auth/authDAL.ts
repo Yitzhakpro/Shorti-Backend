@@ -1,4 +1,5 @@
 import { validate } from 'class-validator';
+import { BadRequestError, InternalServerError } from '../../errorHandler';
 import { User } from '../../models';
 
 class AuthDAL {
@@ -17,15 +18,14 @@ class AuthDAL {
 
       const validationErrors = await validate(newUser);
       if (validationErrors.length > 0) {
-        throw new Error('validation failed');
+        throw new BadRequestError('authDAL', 'Bad regestration parameters', { validationErrors });
       }
 
       const createdUser = await newUser.save();
 
       return createdUser;
-    } catch (err) {
-      console.error(err);
-      throw new Error('Cant create user');
+    } catch (error) {
+      throw new InternalServerError('authDAL', "Can't create username", { email, username, error });
     }
   }
 
@@ -37,9 +37,8 @@ class AuthDAL {
       }
 
       return user;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get user by id');
+    } catch (error) {
+      throw new InternalServerError('authDAL', "Can't get user by id", { id, error });
     }
   }
 
@@ -51,9 +50,8 @@ class AuthDAL {
       }
 
       return user;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get user by email');
+    } catch (error) {
+      throw new InternalServerError('authDAL', "Can't get user by email", { email, error });
     }
   }
 
@@ -65,9 +63,8 @@ class AuthDAL {
       }
 
       return user;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get user by username');
+    } catch (error) {
+      throw new InternalServerError('authDAL', "Can't get user by username", { username, error });
     }
   }
 }
