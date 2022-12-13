@@ -20,15 +20,8 @@
   "plugins": ["import", "@typescript-eslint", "autofix", "prettier"],
   "rules": {
     // general
+    "no-unused-vars": "off",
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
-    "autofix/no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "^_",
-        "ignoreRestSiblings": true,
-        "destructuredArrayIgnorePattern": "^_"
-      }
-    ],
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
