@@ -2,6 +2,7 @@ import fastifyPlugin from 'fastify-plugin';
 import * as yup from 'yup';
 import config from '../config';
 import { ForbiddenError } from '../errorHandler';
+import { logger } from '../logger';
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 
 declare module 'fastify' {

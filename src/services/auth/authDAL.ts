@@ -1,5 +1,6 @@
 import { validate } from 'class-validator';
 import { BadRequestError, InternalServerError } from '../../errorHandler';
+import { logger } from '../../logger';
 import { User } from '../../models';
 
 class AuthDAL {
@@ -23,6 +24,8 @@ class AuthDAL {
 
       const createdUser = await newUser.save();
 
+      logger.info('authDAL', 'Successfully created user in the database', { email, username });
+
       return createdUser;
     } catch (error) {
       throw new InternalServerError('authDAL', "Can't create username", { email, username, error });
@@ -35,6 +38,8 @@ class AuthDAL {
       if (!user) {
         return null;
       }
+
+      logger.info('authDAL', 'Successfully fetched user by id from database', { id });
 
       return user;
     } catch (error) {
@@ -49,6 +54,8 @@ class AuthDAL {
         return null;
       }
 
+      logger.info('authDAL', 'Successfully fetched user by email from database', { email });
+
       return user;
     } catch (error) {
       throw new InternalServerError('authDAL', "Can't get user by email", { email, error });
@@ -61,6 +68,8 @@ class AuthDAL {
       if (!user) {
         return null;
       }
+
+      logger.info('authDAL', 'Successfully fetched user by username from database', { username });
 
       return user;
     } catch (error) {

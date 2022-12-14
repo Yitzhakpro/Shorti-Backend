@@ -1,5 +1,6 @@
 import { validate } from 'class-validator';
 import { BadRequestError, InternalServerError } from '../../errorHandler';
+import { logger } from '../../logger';
 import { GetUrlInfoReturn, Url } from '../../models';
 import { generateId } from '../../utils';
 import { makeUrlValid } from './utils';
@@ -19,6 +20,8 @@ class LinksDAL {
         return false;
       }
 
+      logger.info('linksDAL', 'Successfully fetched if url exist in the database', { linkId });
+
       return true;
     } catch (error) {
       throw new InternalServerError('linksDAL', "Can't determine if url exists", { linkId, error });
@@ -28,6 +31,8 @@ class LinksDAL {
   public async getUrlById(id: string): Promise<Url | null> {
     try {
       const urlObject = await this.urlEntity.findOneBy({ id });
+
+      logger.info('linksDAL', 'Successfully fetched url by id from database', { id });
 
       return urlObject;
     } catch (error) {
@@ -39,6 +44,8 @@ class LinksDAL {
     try {
       const urlObject = await this.urlEntity.findOneBy({ linkId });
 
+      logger.info('linksDAL', 'Successfully fetched url by link id from database', { linkId });
+
       return urlObject;
     } catch (error) {
       throw new InternalServerError('linksDAL', "Can't get url by link id", { linkId, error });
@@ -48,6 +55,8 @@ class LinksDAL {
   public async getUrlsByUser(userId: string): Promise<Url[]> {
     try {
       const urlsByUser = await this.urlEntity.findBy({ userId });
+
+      logger.info('linksDAL', 'Successfully fetched urls of user from the database', { userId });
 
       return urlsByUser;
     } catch (error) {
@@ -81,6 +90,8 @@ class LinksDAL {
 
       const createdUrl = await newUrl.save();
 
+      logger.info('linksDAL', 'Successfully created new short url in the database', { fullUrl, userId });
+
       return createdUrl.getUrlInfo();
     } catch (error) {
       throw new InternalServerError('linksDAL', "Can't create a new short url", { fullUrl, userId, error });
@@ -91,7 +102,11 @@ class LinksDAL {
     try {
       await this.urlEntity.update({ linkId }, { views: currentViews + 1 });
     } catch (error) {
-      console.error("Can't increment link views");
+      logger.error('linksDAL', 'Failed to increment views of short url in the database', {
+        linkId,
+        currentViews,
+        error,
+      });
     }
   }
 }
