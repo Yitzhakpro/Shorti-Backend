@@ -1,4 +1,4 @@
-import { UnauthorizedError } from '../../errorHandler';
+import { AUTH_ERROR_CODES, UnauthorizedError } from '../../errorHandler';
 import { logger } from '../../logger';
 import AuthDAL from './authDAL';
 import type { GetUserInfoReturn } from '../../models';
@@ -19,12 +19,26 @@ export const isLoggedIn = async (email: string): Promise<GetUserInfoReturn | nul
 export const login = async (email: string, password: string): Promise<GetUserInfoReturn> => {
   const user = await AuthDAL.getUserByEmail(email);
   if (!user) {
-    throw new UnauthorizedError('authService', 'Wrong credentials', { email });
+    throw new UnauthorizedError(
+      'authService',
+      'Login failed because user does not exist',
+      AUTH_ERROR_CODES.WRONG_CREDENTIALS_ERROR,
+      {
+        email,
+      }
+    );
   }
 
   const isCorrectPassword = await user.comparePassword(password);
   if (!isCorrectPassword) {
-    throw new UnauthorizedError('authService', 'Wrong credentials', { email });
+    throw new UnauthorizedError(
+      'authService',
+      'Login failed because password is not correct',
+      AUTH_ERROR_CODES.WRONG_CREDENTIALS_ERROR,
+      {
+        email,
+      }
+    );
   }
 
   logger.info('authService', 'User logged in successfully', { email });

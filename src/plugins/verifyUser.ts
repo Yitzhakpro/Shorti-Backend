@@ -1,7 +1,7 @@
 import fastifyPlugin from 'fastify-plugin';
 import * as yup from 'yup';
 import config from '../config';
-import { ForbiddenError } from '../errorHandler';
+import { AUTH_TOKEN_ERROR_CODES, ForbiddenError } from '../errorHandler';
 import { logger } from '../logger';
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 
@@ -28,7 +28,7 @@ const verifyUser: FastifyPluginAsync = async (fastify, _options) => {
       await userDecodedSchema.validate(request.user);
     } catch (error) {
       reply.clearCookie(cookieName);
-      throw new ForbiddenError('VerifyUser', 'Bad auth token', { error });
+      throw new ForbiddenError('VerifyUser', 'Bad auth token', AUTH_TOKEN_ERROR_CODES.BAD_TOKEN_ERROR, { error });
     }
   });
 };

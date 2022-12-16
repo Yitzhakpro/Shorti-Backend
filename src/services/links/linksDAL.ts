@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { BadRequestError, InternalServerError } from '../../errorHandler';
+import { BadRequestError, InternalServerError, LINK_ERROR_CODES } from '../../errorHandler';
 import { logger } from '../../logger';
 import { GetUrlInfoReturn, Url } from '../../models';
 import { generateId } from '../../utils';
@@ -24,7 +24,15 @@ class LinksDAL {
 
       return true;
     } catch (error) {
-      throw new InternalServerError('linksDAL', "Can't determine if url exists", { linkId, error });
+      throw new InternalServerError(
+        'linksDAL',
+        "Can't determine if url exists",
+        LINK_ERROR_CODES.FAILED_TO_RETRIVE_LINK_INFO,
+        {
+          linkId,
+          error,
+        }
+      );
     }
   }
 
@@ -36,7 +44,10 @@ class LinksDAL {
 
       return urlObject;
     } catch (error) {
-      throw new InternalServerError('linksDAL', "Can't get url by id", { id, error });
+      throw new InternalServerError('linksDAL', "Can't get url by id", LINK_ERROR_CODES.FAILED_TO_RETRIVE_LINK_INFO, {
+        id,
+        error,
+      });
     }
   }
 
@@ -48,7 +59,12 @@ class LinksDAL {
 
       return urlObject;
     } catch (error) {
-      throw new InternalServerError('linksDAL', "Can't get url by link id", { linkId, error });
+      throw new InternalServerError(
+        'linksDAL',
+        "Can't get url by link id",
+        LINK_ERROR_CODES.FAILED_TO_RETRIVE_LINK_INFO,
+        { linkId, error }
+      );
     }
   }
 
@@ -60,7 +76,12 @@ class LinksDAL {
 
       return urlsByUser;
     } catch (error) {
-      throw new InternalServerError('linksDAL', "Can't get url by user id", { userId, error });
+      throw new InternalServerError(
+        'linksDAL',
+        "Can't get url by user id",
+        LINK_ERROR_CODES.FAILED_TO_RETRIVE_LINK_INFO,
+        { userId, error }
+      );
     }
   }
 
@@ -85,7 +106,9 @@ class LinksDAL {
 
       const validationErrors = await validate(newUrl);
       if (validationErrors.length > 0) {
-        throw new BadRequestError('linksDAL', 'Bad new url parameters', { validationErrors });
+        throw new BadRequestError('linksDAL', 'Bad new url parameters', LINK_ERROR_CODES.URL_CREATE_VALIDATION_ERROR, {
+          validationErrors,
+        });
       }
 
       const createdUrl = await newUrl.save();
@@ -94,7 +117,11 @@ class LinksDAL {
 
       return createdUrl.getUrlInfo();
     } catch (error) {
-      throw new InternalServerError('linksDAL', "Can't create a new short url", { fullUrl, userId, error });
+      throw new InternalServerError('linksDAL', "Can't create a new short url", LINK_ERROR_CODES.URL_CREATE_ERROR, {
+        fullUrl,
+        userId,
+        error,
+      });
     }
   }
 

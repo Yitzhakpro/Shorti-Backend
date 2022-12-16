@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { BadRequestError, InternalServerError } from '../../errorHandler';
+import { AUTH_ERROR_CODES, BadRequestError, InternalServerError } from '../../errorHandler';
 import { logger } from '../../logger';
 import { User } from '../../models';
 
@@ -19,7 +19,12 @@ class AuthDAL {
 
       const validationErrors = await validate(newUser);
       if (validationErrors.length > 0) {
-        throw new BadRequestError('authDAL', 'Bad regestration parameters', { validationErrors });
+        throw new BadRequestError(
+          'authDAL',
+          'Bad regestration parameters',
+          AUTH_ERROR_CODES.USER_CREATE_VALIDATION_ERROR,
+          { validationErrors }
+        );
       }
 
       const createdUser = await newUser.save();
@@ -28,7 +33,11 @@ class AuthDAL {
 
       return createdUser;
     } catch (error) {
-      throw new InternalServerError('authDAL', "Can't create username", { email, username, error });
+      throw new InternalServerError('authDAL', "Can't create username", AUTH_ERROR_CODES.USER_CREATE_ERROR, {
+        email,
+        username,
+        error,
+      });
     }
   }
 
@@ -43,7 +52,10 @@ class AuthDAL {
 
       return user;
     } catch (error) {
-      throw new InternalServerError('authDAL', "Can't get user by id", { id, error });
+      throw new InternalServerError('authDAL', "Can't get user by id", AUTH_ERROR_CODES.FAILED_TO_RETRIVE_USER_INFO, {
+        id,
+        error,
+      });
     }
   }
 
@@ -58,7 +70,12 @@ class AuthDAL {
 
       return user;
     } catch (error) {
-      throw new InternalServerError('authDAL', "Can't get user by email", { email, error });
+      throw new InternalServerError(
+        'authDAL',
+        "Can't get user by email",
+        AUTH_ERROR_CODES.FAILED_TO_RETRIVE_USER_INFO,
+        { email, error }
+      );
     }
   }
 
@@ -73,7 +90,12 @@ class AuthDAL {
 
       return user;
     } catch (error) {
-      throw new InternalServerError('authDAL', "Can't get user by username", { username, error });
+      throw new InternalServerError(
+        'authDAL',
+        "Can't get user by username",
+        AUTH_ERROR_CODES.FAILED_TO_RETRIVE_USER_INFO,
+        { username, error }
+      );
     }
   }
 }
