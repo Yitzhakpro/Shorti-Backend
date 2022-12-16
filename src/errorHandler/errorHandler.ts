@@ -38,11 +38,12 @@ class ErrorHandler {
 
     if (this.isTrustedError(error)) {
       const { statusCode, errorCode, metadata } = error;
+      const { error: _, ...restOfMetadata } = metadata;
 
       return {
         statusCode,
         message: errorCode,
-        metadata,
+        metadata: restOfMetadata,
       };
     }
 

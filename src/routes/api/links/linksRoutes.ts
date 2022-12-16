@@ -45,7 +45,7 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
   );
 
   fastify.delete<{ Params: IDeleteShortUrlParams }>(
-    '/deleteShortUrl',
+    '/deleteShortUrl/:id',
     {
       schema: deleteShortUrlSchema,
       preHandler: fastify.verifyUser,
