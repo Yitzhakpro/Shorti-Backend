@@ -11,6 +11,8 @@ const fastifyErrorHandler = (error: FastifyError | BaseError | Error, request: F
     return reply.status(statusCode).send({ message, metadata });
   }
 
+  // TODO: later restart gracefully
+
   return reply.status(statusCode).send({ message, metadata });
 };
 

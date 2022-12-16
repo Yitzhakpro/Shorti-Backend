@@ -37,11 +37,11 @@ class ErrorHandler {
     }
 
     if (this.isTrustedError(error)) {
-      const { statusCode, message, metadata } = error;
+      const { statusCode, errorCode, metadata } = error;
 
       return {
         statusCode,
-        message,
+        message: errorCode,
         metadata,
       };
     }
