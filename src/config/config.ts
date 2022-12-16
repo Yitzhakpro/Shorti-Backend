@@ -34,6 +34,21 @@ const config = convict({
       env: 'CORS_CREDENTIALS',
     },
   },
+  logger: {
+    filepath: {
+      doc: 'path to store log files',
+      default: 'C:\\temp',
+      env: 'LOGS_FILE_PATH',
+    },
+    maxFiles: {
+      doc: 'max files of log files (for rotation)',
+      default: 2,
+    },
+    maxsize: {
+      doc: 'max size of each log file',
+      default: 200_000_000, // 200 megabytes
+    },
+  },
   auth: {
     fastifyJwtOptions: {
       cookie: {

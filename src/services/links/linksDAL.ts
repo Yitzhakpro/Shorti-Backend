@@ -1,4 +1,6 @@
 import { validate } from 'class-validator';
+import { BadRequestError, InternalServerError, LINK_ERROR_CODES } from '../../errorHandler';
+import { logger } from '../../logger';
 import { GetUrlInfoReturn, Url } from '../../models';
 import { generateId } from '../../utils';
 import { makeUrlValid } from './utils';
@@ -18,10 +20,19 @@ class LinksDAL {
         return false;
       }
 
+      logger.info('linksDAL', 'Successfully fetched if url exist in the database', { linkId });
+
       return true;
-    } catch (err) {
-      console.error(err);
-      throw new Error('Cant fetch url info');
+    } catch (error) {
+      throw new InternalServerError(
+        'linksDAL',
+        "Can't determine if url exists",
+        LINK_ERROR_CODES.FAILED_TO_RETRIVE_LINK_INFO,
+        {
+          linkId,
+          error,
+        }
+      );
     }
   }
 
@@ -29,10 +40,14 @@ class LinksDAL {
     try {
       const urlObject = await this.urlEntity.findOneBy({ id });
 
+      logger.info('linksDAL', 'Successfully fetched url by id from database', { id });
+
       return urlObject;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get url by id');
+    } catch (error) {
+      throw new InternalServerError('linksDAL', "Can't get url by id", LINK_ERROR_CODES.FAILED_TO_RETRIVE_LINK_INFO, {
+        id,
+        error,
+      });
     }
   }
 
@@ -40,10 +55,16 @@ class LinksDAL {
     try {
       const urlObject = await this.urlEntity.findOneBy({ linkId });
 
+      logger.info('linksDAL', 'Successfully fetched url by link id from database', { linkId });
+
       return urlObject;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get url by link id');
+    } catch (error) {
+      throw new InternalServerError(
+        'linksDAL',
+        "Can't get url by link id",
+        LINK_ERROR_CODES.FAILED_TO_RETRIVE_LINK_INFO,
+        { linkId, error }
+      );
     }
   }
 
@@ -51,10 +72,16 @@ class LinksDAL {
     try {
       const urlsByUser = await this.urlEntity.findBy({ userId });
 
+      logger.info('linksDAL', 'Successfully fetched urls of user from the database', { userId });
+
       return urlsByUser;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get all urls by user');
+    } catch (error) {
+      throw new InternalServerError(
+        'linksDAL',
+        "Can't get url by user id",
+        LINK_ERROR_CODES.FAILED_TO_RETRIVE_LINK_INFO,
+        { userId, error }
+      );
     }
   }
 
@@ -79,23 +106,34 @@ class LinksDAL {
 
       const validationErrors = await validate(newUrl);
       if (validationErrors.length > 0) {
-        throw new Error('url validation error');
+        throw new BadRequestError('linksDAL', 'Bad new url parameters', LINK_ERROR_CODES.URL_CREATE_VALIDATION_ERROR, {
+          validationErrors,
+        });
       }
 
       const createdUrl = await newUrl.save();
 
+      logger.info('linksDAL', 'Successfully created new short url in the database', { fullUrl, userId });
+
       return createdUrl.getUrlInfo();
-    } catch (err) {
-      console.error(err);
-      throw new Error('Cant create url');
+    } catch (error) {
+      throw new InternalServerError('linksDAL', "Can't create a new short url", LINK_ERROR_CODES.URL_CREATE_ERROR, {
+        fullUrl,
+        userId,
+        error,
+      });
     }
   }
 
   public async incrementShortLinkViews(linkId: string, currentViews: number): Promise<void> {
     try {
       await this.urlEntity.update({ linkId }, { views: currentViews + 1 });
-    } catch (err) {
-      console.error('failed to increment short link views', err);
+    } catch (error) {
+      logger.error('linksDAL', 'Failed to increment views of short url in the database', {
+        linkId,
+        currentViews,
+        error,
+      });
     }
   }
 }

@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { AUTH_ERROR_CODES, InternalServerError } from '../errorHandler';
 
 export const generateId = (length: number): string => {
   const numbers = '0123456789';
@@ -20,8 +21,11 @@ export const hashString = async (text: string, rounds = 10): Promise<string> => 
     const hashedString = bcrypt.hash(text, rounds);
 
     return hashedString;
-  } catch (err) {
-    console.error(err);
-    throw new Error('cant hash password');
+  } catch (error) {
+    throw new InternalServerError('hashPassword', 'Failed to hash string', AUTH_ERROR_CODES.USER_CREATE_ERROR, {
+      text,
+      rounds,
+      error,
+    });
   }
 };

@@ -1,4 +1,6 @@
 import { validate } from 'class-validator';
+import { AUTH_ERROR_CODES, BadRequestError, InternalServerError } from '../../errorHandler';
+import { logger } from '../../logger';
 import { User } from '../../models';
 
 class AuthDAL {
@@ -17,15 +19,25 @@ class AuthDAL {
 
       const validationErrors = await validate(newUser);
       if (validationErrors.length > 0) {
-        throw new Error('validation failed');
+        throw new BadRequestError(
+          'authDAL',
+          'Bad regestration parameters',
+          AUTH_ERROR_CODES.USER_CREATE_VALIDATION_ERROR,
+          { validationErrors }
+        );
       }
 
       const createdUser = await newUser.save();
 
+      logger.info('authDAL', 'Successfully created user in the database', { email, username });
+
       return createdUser;
-    } catch (err) {
-      console.error(err);
-      throw new Error('Cant create user');
+    } catch (error) {
+      throw new InternalServerError('authDAL', "Can't create username", AUTH_ERROR_CODES.USER_CREATE_ERROR, {
+        email,
+        username,
+        error,
+      });
     }
   }
 
@@ -36,10 +48,14 @@ class AuthDAL {
         return null;
       }
 
+      logger.info('authDAL', 'Successfully fetched user by id from database', { id });
+
       return user;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get user by id');
+    } catch (error) {
+      throw new InternalServerError('authDAL', "Can't get user by id", AUTH_ERROR_CODES.FAILED_TO_RETRIVE_USER_INFO, {
+        id,
+        error,
+      });
     }
   }
 
@@ -50,10 +66,16 @@ class AuthDAL {
         return null;
       }
 
+      logger.info('authDAL', 'Successfully fetched user by email from database', { email });
+
       return user;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get user by email');
+    } catch (error) {
+      throw new InternalServerError(
+        'authDAL',
+        "Can't get user by email",
+        AUTH_ERROR_CODES.FAILED_TO_RETRIVE_USER_INFO,
+        { email, error }
+      );
     }
   }
 
@@ -64,10 +86,16 @@ class AuthDAL {
         return null;
       }
 
+      logger.info('authDAL', 'Successfully fetched user by username from database', { username });
+
       return user;
-    } catch (err) {
-      console.error(err);
-      throw new Error('cant get user by username');
+    } catch (error) {
+      throw new InternalServerError(
+        'authDAL',
+        "Can't get user by username",
+        AUTH_ERROR_CODES.FAILED_TO_RETRIVE_USER_INFO,
+        { username, error }
+      );
     }
   }
 }

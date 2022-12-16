@@ -10,6 +10,7 @@ import {
   BeforeInsert,
   OneToMany,
 } from 'typeorm';
+import { AUTH_ERROR_CODES, UnauthorizedError } from '../errorHandler';
 import { hashString } from '../utils';
 import { Url } from './Url';
 import type { GetUserInfoReturn } from './types';
@@ -52,8 +53,16 @@ export class User extends BaseEntity {
       const isCorrectPassword = await bcrypt.compare(triedPassword, this.password);
 
       return isCorrectPassword;
-    } catch (err) {
-      throw new Error('wrong credentials');
+    } catch (error) {
+      throw new UnauthorizedError(
+        'userModal',
+        "Can't compare password with hased password",
+        AUTH_ERROR_CODES.WRONG_CREDENTIALS_ERROR,
+        {
+          email: this.email,
+          error,
+        }
+      );
     }
   }
 
