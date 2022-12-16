@@ -1,9 +1,12 @@
+import { logger } from '../logger';
 import { BaseError } from './errors';
 import type { ErrorClientInfo } from './types';
 import type { FastifyError } from 'fastify';
+
 class ErrorHandler {
-  public async handleError(error: Error): Promise<void> {
-    console.error(error);
+  public async handleError(error: FastifyError | BaseError): Promise<void> {
+    const { name, message } = error;
+    logger.error(name, message, { ...error });
   }
 
   public isFastifyValidationError(error: FastifyError | BaseError | Error): error is FastifyError {
@@ -34,10 +37,10 @@ class ErrorHandler {
     }
 
     if (this.isTrustedError(error)) {
-      const { httpCode, message, metadata } = error;
+      const { statusCode, message, metadata } = error;
 
       return {
-        statusCode: httpCode,
+        statusCode,
         message,
         metadata,
       };

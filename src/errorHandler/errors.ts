@@ -9,7 +9,7 @@ export enum HttpStatusCode {
 
 export class BaseError extends Error {
   public readonly name: string;
-  public readonly httpCode: HttpStatusCode;
+  public readonly statusCode: HttpStatusCode;
   public readonly metadata: Record<string, unknown>;
   public readonly isOpeational: boolean;
 
@@ -18,7 +18,7 @@ export class BaseError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
 
     this.name = name;
-    this.httpCode = httpCode;
+    this.statusCode = httpCode;
     this.metadata = metadata;
     this.isOpeational = isOperational;
 
