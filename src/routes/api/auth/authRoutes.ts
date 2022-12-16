@@ -1,6 +1,7 @@
 import config from '../../../config';
 import { authService } from '../../../services';
 import { loginSchema, registerSchema } from './schemas';
+import type { DecodedAuthToken } from '../../../types';
 import type { LoginBody, RegisterBody } from './types';
 import type { FastifyPluginAsync } from 'fastify';
 
@@ -11,7 +12,7 @@ const cookieOptions = config.get('auth.cookieOptions');
 const authRoutes: FastifyPluginAsync = async (fastify, _options) => {
   fastify.get('/isLoggedIn', async (request, reply) => {
     try {
-      const decodedToken = (await request.jwtVerify()) as { id: string; email: string; username: string };
+      const decodedToken = (await request.jwtVerify()) as DecodedAuthToken;
       const user = await authService.isLoggedIn(decodedToken.email);
 
       return reply.send(user);

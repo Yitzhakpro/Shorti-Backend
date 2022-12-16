@@ -25,3 +25,16 @@ const createShortUrlBody = {
 export const createShortUrlSchema: FastifySchema = {
   body: createShortUrlBody,
 };
+
+// delete short url route
+const deleteShortUrlParams = {
+  type: 'object',
+  required: ['id'],
+  properties: {
+    id: { type: 'string' },
+  },
+};
+
+export const deleteShortUrlSchema: FastifySchema = {
+  params: deleteShortUrlParams,
+};

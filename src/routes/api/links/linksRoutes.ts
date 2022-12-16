@@ -1,7 +1,8 @@
 import config from '../../../config';
 import { linksService } from '../../../services';
-import { getShortUrlSchema, createShortUrlSchema } from './schemas';
-import { IGetShortUrlParams, ICreateShortUrlBody } from './types';
+import { getShortUrlSchema, createShortUrlSchema, deleteShortUrlSchema } from './schemas';
+import { IGetShortUrlParams, ICreateShortUrlBody, IDeleteShortUrlParams } from './types';
+import type { DecodedAuthToken } from '../../../types';
 import type { FastifyPluginAsync } from 'fastify';
 
 const clientOrigin = config.get('cors.origin');
@@ -23,7 +24,7 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
   );
 
   fastify.get('/getUrls', { preHandler: fastify.verifyUser }, async (request, _reply) => {
-    const decodedToken = (await request.jwtVerify()) as { id: string; email: string; username: string };
+    const decodedToken = (await request.jwtVerify()) as DecodedAuthToken;
 
     const allUrls = await linksService.getUrls(decodedToken.id);
 
@@ -35,11 +36,25 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
     { schema: createShortUrlSchema, preHandler: fastify.verifyUser },
     async (request, _reply) => {
       const { fullUrl } = request.body;
-      const decodedToken = (await request.jwtVerify()) as { id: string; email: string; username: string };
+      const decodedToken = (await request.jwtVerify()) as DecodedAuthToken;
 
       const urlObject = await linksService.createShortUrl(fullUrl, decodedToken.id);
 
       return urlObject;
+    }
+  );
+
+  fastify.delete<{ Params: IDeleteShortUrlParams }>(
+    '/deleteShortUrl',
+    {
+      schema: deleteShortUrlSchema,
+      preHandler: fastify.verifyUser,
+    },
+    async (request, _reply) => {
+      const { id } = request.params;
+      const decodedToken = (await request.jwtVerify()) as DecodedAuthToken;
+
+      return 'Ok';
     }
   );
 };
