@@ -1,12 +1,12 @@
-import { NotFoundError } from '../../errorHandler';
 import { logger } from '../../logger';
 import LinksDAL from './linksDAL';
 import type { GetUrlInfoReturn } from '../../models';
 
-export const getShortUrl = async (linkId: string): Promise<string> => {
+export const getShortUrl = async (linkId: string): Promise<string | null> => {
   const urlObject = await LinksDAL.getUrlByLinkId(linkId);
   if (!urlObject) {
-    throw new NotFoundError('linksService', 'Could not find link', { linkId });
+    logger.warn('linksService', 'Could not find link by link id', { linkId });
+    return null;
   }
 
   await LinksDAL.incrementShortLinkViews(linkId, urlObject.views);
