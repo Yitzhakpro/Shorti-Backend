@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { AUTH_ERROR_CODES, BadRequestError, InternalServerError } from '../../errorHandler';
+import { AUTH_ERROR_CODES, BadRequestError, BaseError, InternalServerError } from '../../errorHandler';
 import { logger } from '../../logger';
 import { User } from '../../models';
 
@@ -33,6 +33,10 @@ class AuthDAL {
 
       return createdUser;
     } catch (error) {
+      if (error instanceof BaseError) {
+        throw error;
+      }
+
       throw new InternalServerError('authDAL', "Can't create username", AUTH_ERROR_CODES.USER_CREATE_ERROR, {
         email,
         username,
