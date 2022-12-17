@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { BadRequestError, InternalServerError, LINK_ERROR_CODES } from '../../errorHandler';
+import { BadRequestError, BaseError, InternalServerError, LINK_ERROR_CODES } from '../../errorHandler';
 import { logger } from '../../logger';
 import { GetUrlInfoReturn, Url } from '../../models';
 import { generateId } from '../../utils';
@@ -118,6 +118,10 @@ class LinksDAL {
 
       return createdUrl.getUrlInfo();
     } catch (error) {
+      if (error instanceof BaseError) {
+        throw error;
+      }
+
       throw new InternalServerError('linksDAL', "Can't create a new short url", LINK_ERROR_CODES.URL_CREATE_ERROR, {
         fullUrl,
         userId,
