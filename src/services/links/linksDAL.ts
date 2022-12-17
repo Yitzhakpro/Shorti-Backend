@@ -107,6 +107,7 @@ class LinksDAL {
 
       const validationErrors = await validate(newUrl);
       if (validationErrors.length > 0) {
+        // TODO: pass better errors to client
         throw new BadRequestError('linksDAL', 'Bad new url parameters', LINK_ERROR_CODES.URL_CREATE_VALIDATION_ERROR, {
           validationErrors,
         });
