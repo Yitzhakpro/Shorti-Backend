@@ -54,6 +54,8 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
       const { id } = request.params;
       const decodedToken = (await request.jwtVerify()) as DecodedAuthToken;
 
+      await linksService.deleteShortUrl(id, decodedToken.id);
+
       return 'Ok';
     }
   );
