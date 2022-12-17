@@ -4,6 +4,7 @@ import { logger } from '../../logger';
 import { GetUrlInfoReturn, Url } from '../../models';
 import { generateId } from '../../utils';
 import { makeUrlValid } from './utils';
+import type { DeleteResult } from 'typeorm';
 
 class LinksDAL {
   private urlEntity: typeof Url;
@@ -120,6 +121,19 @@ class LinksDAL {
       throw new InternalServerError('linksDAL', "Can't create a new short url", LINK_ERROR_CODES.URL_CREATE_ERROR, {
         fullUrl,
         userId,
+        error,
+      });
+    }
+  }
+
+  public async deleteShortUrl(id: string): Promise<DeleteResult> {
+    try {
+      const deleteResult = await this.urlEntity.delete({ id });
+
+      return deleteResult;
+    } catch (error) {
+      throw new InternalServerError('linksDAL', 'Failed to delete short url by id', LINK_ERROR_CODES.URL_DELETE_ERROR, {
+        id,
         error,
       });
     }

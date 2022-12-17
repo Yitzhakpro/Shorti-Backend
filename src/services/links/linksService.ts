@@ -1,3 +1,4 @@
+import { ForbiddenError, LINK_ERROR_CODES, NotFoundError } from '../../errorHandler';
 import { logger } from '../../logger';
 import LinksDAL from './linksDAL';
 import type { GetUrlInfoReturn } from '../../models';
@@ -31,4 +32,27 @@ export const createShortUrl = async (fullUrl: string, userId: string): Promise<G
   logger.info('linksService', 'Successfully created a new short url', { fullUrl, userId });
 
   return urlObject;
+};
+
+export const deleteShortUrl = async (shortUrlId: string, userId: string): Promise<void> => {
+  const urlObject = await LinksDAL.getUrlById(shortUrlId);
+  if (!urlObject) {
+    throw new NotFoundError(
+      'linksService',
+      "Can't delete url becuase url doesn't exist",
+      LINK_ERROR_CODES.URL_DELETE_NOT_EXIST_ERROR,
+      { shortUrlId, userId }
+    );
+  }
+
+  if (urlObject.userId !== userId) {
+    throw new ForbiddenError(
+      'linksService',
+      "Can't delete url because it doesnt belong to user",
+      LINK_ERROR_CODES.URL_DELETE_FORBIDDEN,
+      { shortUrlId, userId }
+    );
+  }
+
+  await LinksDAL.deleteShortUrl(shortUrlId);
 };
