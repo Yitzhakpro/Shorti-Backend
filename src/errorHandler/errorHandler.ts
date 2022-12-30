@@ -49,7 +49,7 @@ class ErrorHandler {
 
     return {
       statusCode: 500,
-      message: error.message,
+      message: 'INTERNAL_SERVER_ERROR',
       metadata: {},
     };
   }
