@@ -13,8 +13,9 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
     { schema: getShortUrlSchema },
     async (request, reply) => {
       const { linkId } = request.query;
+      const formatedLinkId = linkId.startsWith('/') ? linkId.slice(1) : linkId;
 
-      const url = await linksService.getShortUrl(linkId);
+      const url = await linksService.getShortUrl(formatedLinkId);
       if (!url) {
         return reply.redirect(`${clientOrigin}/u/404`);
       }
