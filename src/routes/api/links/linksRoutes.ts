@@ -1,18 +1,18 @@
 import config from '../../../config';
 import { linksService } from '../../../services';
 import { getShortUrlSchema, createShortUrlSchema, deleteShortUrlSchema } from './schemas';
-import { IGetShortUrlParams, ICreateShortUrlBody, IDeleteShortUrlParams } from './types';
+import { IGetShortUrlQuerystring, ICreateShortUrlBody, IDeleteShortUrlParams } from './types';
 import type { DecodedAuthToken } from '../../../types';
 import type { FastifyPluginAsync } from 'fastify';
 
 const clientOrigin = config.get('cors.origin');
 
 const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
-  fastify.get<{ Params: IGetShortUrlParams }>(
-    '/getShortUrl/:linkId',
+  fastify.get<{ Querystring: IGetShortUrlQuerystring }>(
+    '/getShortUrl',
     { schema: getShortUrlSchema },
     async (request, reply) => {
-      const { linkId } = request.params;
+      const { linkId } = request.query;
 
       const url = await linksService.getShortUrl(linkId);
       if (!url) {

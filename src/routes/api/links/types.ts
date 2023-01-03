@@ -1,4 +1,4 @@
-export interface IGetShortUrlParams {
+export interface IGetShortUrlQuerystring {
   linkId: string;
 }
 

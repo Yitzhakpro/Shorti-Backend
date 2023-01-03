@@ -10,7 +10,7 @@ const getShortUrlParams = {
 };
 
 export const getShortUrlSchema: FastifySchema = {
-  params: getShortUrlParams,
+  querystring: getShortUrlParams,
 };
 
 // create short url route
