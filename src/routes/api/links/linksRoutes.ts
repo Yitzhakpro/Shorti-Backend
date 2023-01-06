@@ -36,10 +36,10 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
     '/createShortUrl',
     { schema: createShortUrlSchema, preHandler: fastify.verifyUser },
     async (request, _reply) => {
-      const { fullUrl } = request.body;
+      const { fullUrl, linkName } = request.body;
       const decodedToken = (await request.jwtVerify()) as DecodedAuthToken;
 
-      const urlObject = await linksService.createShortUrl(fullUrl, decodedToken.id);
+      const urlObject = await linksService.createShortUrl(fullUrl, decodedToken.id, linkName);
 
       return urlObject;
     }

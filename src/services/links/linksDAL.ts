@@ -37,6 +37,22 @@ class LinksDAL {
     }
   }
 
+  private async genLinkId(): Promise<string> {
+    let linkAlreadyExist = true;
+    let newLinkId = generateId(8);
+
+    while (linkAlreadyExist) {
+      const shortUrlExist = await this.doesShortUrlExist(newLinkId);
+      if (!shortUrlExist) {
+        linkAlreadyExist = false;
+      } else {
+        newLinkId = generateId(8);
+      }
+    }
+
+    return newLinkId;
+  }
+
   public async getUrlById(id: string): Promise<Url | null> {
     try {
       const urlObject = await this.urlEntity.findOneBy({ id });
@@ -86,22 +102,28 @@ class LinksDAL {
     }
   }
 
-  public async createNewShortUrl(fullUrl: string, userId: string): Promise<GetUrlInfoReturn> {
+  public async createNewShortUrl(fullUrl: string, userId: string, linkName?: string): Promise<GetUrlInfoReturn> {
     try {
-      let linkAlreadyExist = true;
-      let newLinkId = generateId(8);
-      while (linkAlreadyExist) {
-        const shortUrlExist = await this.doesShortUrlExist(newLinkId);
-        if (!shortUrlExist) {
-          linkAlreadyExist = false;
-        } else {
-          newLinkId = generateId(8);
+      let linkId;
+      if (linkName) {
+        const doesLinkExist = await this.doesShortUrlExist(linkName);
+        if (doesLinkExist) {
+          throw new BadRequestError(
+            'linksDAL',
+            "Can't create custom short url because link name is used",
+            LINK_ERROR_CODES.URL_CREATE_ALREADY_EXIST_ERROR,
+            { fullUrl, userId, linkName }
+          );
         }
+
+        linkId = linkName;
+      } else {
+        linkId = await this.genLinkId();
       }
 
       const newUrl = new this.urlEntity();
       newUrl.fullUrl = makeUrlValid(fullUrl);
-      newUrl.linkId = newLinkId;
+      newUrl.linkId = linkId;
       newUrl.views = 0;
       newUrl.userId = userId;
 
