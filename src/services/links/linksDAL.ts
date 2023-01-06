@@ -102,9 +102,24 @@ class LinksDAL {
     }
   }
 
-  public async createNewShortUrl(fullUrl: string, userId: string): Promise<GetUrlInfoReturn> {
+  public async createNewShortUrl(fullUrl: string, userId: string, linkName?: string): Promise<GetUrlInfoReturn> {
     try {
-      const linkId = await this.genLinkId();
+      let linkId;
+      if (linkName) {
+        const doesLinkExist = await this.doesShortUrlExist(linkName);
+        if (doesLinkExist) {
+          throw new BadRequestError(
+            'linksDAL',
+            "Can't create custom short url because link name is used",
+            LINK_ERROR_CODES.URL_CREATE_ALREADY_EXIST_ERROR,
+            { fullUrl, userId, linkName }
+          );
+        }
+
+        linkId = linkName;
+      } else {
+        linkId = await this.genLinkId();
+      }
 
       const newUrl = new this.urlEntity();
       newUrl.fullUrl = makeUrlValid(fullUrl);

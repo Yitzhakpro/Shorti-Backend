@@ -4,6 +4,7 @@ export interface IGetShortUrlQuerystring {
 
 export interface ICreateShortUrlBody {
   fullUrl: string;
+  linkName?: string;
 }
 
 export interface IDeleteShortUrlParams {

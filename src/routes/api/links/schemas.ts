@@ -19,6 +19,7 @@ const createShortUrlBody = {
   required: ['fullUrl'],
   properties: {
     fullUrl: { type: 'string' },
+    linkName: { type: 'string' },
   },
 };
 

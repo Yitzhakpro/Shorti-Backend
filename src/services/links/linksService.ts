@@ -26,8 +26,8 @@ export const getUrls = async (userId: string): Promise<GetUrlInfoReturn[]> => {
   return urlsInfo;
 };
 
-export const createShortUrl = async (fullUrl: string, userId: string): Promise<GetUrlInfoReturn> => {
-  const urlObject = await LinksDAL.createNewShortUrl(fullUrl, userId);
+export const createShortUrl = async (fullUrl: string, userId: string, linkName?: string): Promise<GetUrlInfoReturn> => {
+  const urlObject = await LinksDAL.createNewShortUrl(fullUrl, userId, linkName);
 
   logger.info('linksService', 'Successfully created a new short url', { fullUrl, userId });
 
