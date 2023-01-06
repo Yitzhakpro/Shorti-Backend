@@ -1,4 +1,4 @@
-import { IsUrl } from 'class-validator';
+import { IsUrl, MinLength, MaxLength, NotContains } from 'class-validator';
 import {
   Entity,
   Column,
@@ -21,6 +21,9 @@ export class Url extends BaseEntity {
   fullUrl!: string;
 
   @Column()
+  @MinLength(1)
+  @MaxLength(30)
+  @NotContains(' ')
   linkId!: string;
 
   @Column()
