@@ -37,6 +37,22 @@ class LinksDAL {
     }
   }
 
+  private async genLinkId(): Promise<string> {
+    let linkAlreadyExist = true;
+    let newLinkId = generateId(8);
+
+    while (linkAlreadyExist) {
+      const shortUrlExist = await this.doesShortUrlExist(newLinkId);
+      if (!shortUrlExist) {
+        linkAlreadyExist = false;
+      } else {
+        newLinkId = generateId(8);
+      }
+    }
+
+    return newLinkId;
+  }
+
   public async getUrlById(id: string): Promise<Url | null> {
     try {
       const urlObject = await this.urlEntity.findOneBy({ id });
@@ -88,20 +104,11 @@ class LinksDAL {
 
   public async createNewShortUrl(fullUrl: string, userId: string): Promise<GetUrlInfoReturn> {
     try {
-      let linkAlreadyExist = true;
-      let newLinkId = generateId(8);
-      while (linkAlreadyExist) {
-        const shortUrlExist = await this.doesShortUrlExist(newLinkId);
-        if (!shortUrlExist) {
-          linkAlreadyExist = false;
-        } else {
-          newLinkId = generateId(8);
-        }
-      }
+      const linkId = await this.genLinkId();
 
       const newUrl = new this.urlEntity();
       newUrl.fullUrl = makeUrlValid(fullUrl);
-      newUrl.linkId = newLinkId;
+      newUrl.linkId = linkId;
       newUrl.views = 0;
       newUrl.userId = userId;
 
