@@ -144,7 +144,7 @@ class LinksDAL {
       const updatedUrl = new this.urlEntity();
       updatedUrl.linkId = linkName;
 
-      const validationErrors = await validate(updatedUrl);
+      const validationErrors = await validate(updatedUrl, { skipMissingProperties: true });
       if (validationErrors.length > 0) {
         // TODO: pass better errors to client
         throw new BadRequestError('linksDAL', 'Bad new url parameters', LINK_ERROR_CODES.URL_RENAME_VALIDATION_ERROR, {
