@@ -47,6 +47,16 @@ export const createShortUrl = async (fullUrl: string, userId: string, linkName?:
 };
 
 export const renameShortUrl = async (id: string, linkName: string, userId: string): Promise<void> => {
+  const doesNewNameExist = await LinksDAL.doesShortUrlExist(linkName);
+  if (doesNewNameExist) {
+    throw new BadRequestError(
+      'LinksService',
+      "Can't rename url because new name is already used",
+      LINK_ERROR_CODES.URL_RENAME_ALREADY_EXIST_ERROR,
+      { id, linkName, userId }
+    );
+  }
+
   const urlObject = await LinksDAL.getUrlById(id);
   if (!urlObject) {
     throw new NotFoundError(
@@ -65,6 +75,8 @@ export const renameShortUrl = async (id: string, linkName: string, userId: strin
       { id, userId }
     );
   }
+
+  logger.info('linksService', 'Successfully renamed a short url', { id, linkName, userId });
 
   await LinksDAL.renameShortUrl(id, linkName);
 };
@@ -88,6 +100,8 @@ export const deleteShortUrl = async (id: string, userId: string): Promise<void> 
       { id, userId }
     );
   }
+
+  logger.info('linksService', 'Successfully deleted a short url', { id, userId });
 
   await LinksDAL.deleteShortUrl(id);
 };
