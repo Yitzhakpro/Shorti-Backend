@@ -46,25 +46,62 @@ export const createShortUrl = async (fullUrl: string, userId: string, linkName?:
   return urlObject;
 };
 
-export const deleteShortUrl = async (shortUrlId: string, userId: string): Promise<void> => {
-  const urlObject = await LinksDAL.getUrlById(shortUrlId);
+export const renameShortUrl = async (id: string, linkName: string, userId: string): Promise<void> => {
+  const doesNewNameExist = await LinksDAL.doesShortUrlExist(linkName);
+  if (doesNewNameExist) {
+    throw new BadRequestError(
+      'LinksService',
+      "Can't rename url because new name is already used",
+      LINK_ERROR_CODES.URL_RENAME_ALREADY_EXIST_ERROR,
+      { id, linkName, userId }
+    );
+  }
+
+  const urlObject = await LinksDAL.getUrlById(id);
   if (!urlObject) {
     throw new NotFoundError(
-      'linksService',
-      "Can't delete url becuase url doesn't exist",
-      LINK_ERROR_CODES.URL_DELETE_NOT_EXIST_ERROR,
-      { shortUrlId, userId }
+      'LinksService',
+      "Can't rename url because url doesn't exist",
+      LINK_ERROR_CODES.URL_RENAME_NOT_EXIST_ERROR,
+      { id, linkName }
     );
   }
 
   if (urlObject.userId !== userId) {
     throw new ForbiddenError(
       'linksService',
-      "Can't delete url because it doesnt belong to user",
-      LINK_ERROR_CODES.URL_DELETE_FORBIDDEN,
-      { shortUrlId, userId }
+      "Can't rename url because it doesn't belong to user",
+      LINK_ERROR_CODES.URL_RENAME_FORBIDDEN,
+      { id, userId }
     );
   }
 
-  await LinksDAL.deleteShortUrl(shortUrlId);
+  logger.info('linksService', 'Successfully renamed a short url', { id, linkName, userId });
+
+  await LinksDAL.renameShortUrl(id, linkName);
+};
+
+export const deleteShortUrl = async (id: string, userId: string): Promise<void> => {
+  const urlObject = await LinksDAL.getUrlById(id);
+  if (!urlObject) {
+    throw new NotFoundError(
+      'linksService',
+      "Can't delete url becuase url doesn't exist",
+      LINK_ERROR_CODES.URL_DELETE_NOT_EXIST_ERROR,
+      { id, userId }
+    );
+  }
+
+  if (urlObject.userId !== userId) {
+    throw new ForbiddenError(
+      'linksService',
+      "Can't delete url because it doesn't belong to user",
+      LINK_ERROR_CODES.URL_DELETE_FORBIDDEN,
+      { id, userId }
+    );
+  }
+
+  logger.info('linksService', 'Successfully deleted a short url', { id, userId });
+
+  await LinksDAL.deleteShortUrl(id);
 };

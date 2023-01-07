@@ -4,7 +4,7 @@ import { logger } from '../../logger';
 import { GetUrlInfoReturn, Url } from '../../models';
 import { generateId } from '../../utils';
 import { makeUrlValid } from './utils';
-import type { DeleteResult } from 'typeorm';
+import type { DeleteResult, UpdateResult } from 'typeorm';
 
 class LinksDAL {
   private urlEntity: typeof Url;
@@ -122,7 +122,7 @@ class LinksDAL {
 
       const createdUrl = await newUrl.save();
 
-      logger.info('linksDAL', 'Successfully created new short url in the database', { fullUrl, userId });
+      logger.info('linksDAL', 'Successfully created new short url in the database', { fullUrl, userId, linkId });
 
       return createdUrl.getUrlInfo();
     } catch (error) {
@@ -133,6 +133,38 @@ class LinksDAL {
       throw new InternalServerError('linksDAL', "Can't create a new short url", LINK_ERROR_CODES.URL_CREATE_ERROR, {
         fullUrl,
         userId,
+        linkName,
+        error,
+      });
+    }
+  }
+
+  public async renameShortUrl(id: string, linkName: string): Promise<UpdateResult> {
+    try {
+      const updatedUrl = new this.urlEntity();
+      updatedUrl.linkId = linkName;
+
+      const validationErrors = await validate(updatedUrl);
+      if (validationErrors.length > 0) {
+        // TODO: pass better errors to client
+        throw new BadRequestError('linksDAL', 'Bad new url parameters', LINK_ERROR_CODES.URL_RENAME_VALIDATION_ERROR, {
+          validationErrors,
+        });
+      }
+
+      const updateResult = await this.urlEntity.update({ id }, { linkId: linkName });
+
+      logger.info('linksDAL', 'Successfully renamed short url in the database', { id, linkName });
+
+      return updateResult;
+    } catch (error) {
+      if (error instanceof BaseError) {
+        throw error;
+      }
+
+      throw new InternalServerError('linksDAL', "Can't rename short url", LINK_ERROR_CODES.URL_RENAME_ERROR, {
+        id,
+        linkName,
         error,
       });
     }

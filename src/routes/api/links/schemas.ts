@@ -27,6 +27,20 @@ export const createShortUrlSchema: FastifySchema = {
   body: createShortUrlBody,
 };
 
+// rename short url route
+const renameShortUrlBody = {
+  type: 'object',
+  required: ['id', 'linkName'],
+  properties: {
+    id: { type: 'string' },
+    linkName: { type: 'string' },
+  },
+};
+
+export const renameShortUrlSchema: FastifySchema = {
+  body: renameShortUrlBody,
+};
+
 // delete short url route
 const deleteShortUrlParams = {
   type: 'object',
