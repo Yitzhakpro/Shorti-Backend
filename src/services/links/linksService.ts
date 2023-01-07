@@ -1,4 +1,4 @@
-import { ForbiddenError, LINK_ERROR_CODES, NotFoundError } from '../../errorHandler';
+import { BadRequestError, ForbiddenError, LINK_ERROR_CODES, NotFoundError } from '../../errorHandler';
 import { logger } from '../../logger';
 import LinksDAL from './linksDAL';
 import type { GetUrlInfoReturn } from '../../models';
@@ -27,6 +27,18 @@ export const getUrls = async (userId: string): Promise<GetUrlInfoReturn[]> => {
 };
 
 export const createShortUrl = async (fullUrl: string, userId: string, linkName?: string): Promise<GetUrlInfoReturn> => {
+  if (linkName) {
+    const doesLinkExist = await LinksDAL.doesShortUrlExist(linkName);
+    if (doesLinkExist) {
+      throw new BadRequestError(
+        'linksService',
+        "Can't create custom short url because link name is already used",
+        LINK_ERROR_CODES.URL_CREATE_ALREADY_EXIST_ERROR,
+        { fullUrl, userId, linkName }
+      );
+    }
+  }
+
   const urlObject = await LinksDAL.createNewShortUrl(fullUrl, userId, linkName);
 
   logger.info('linksService', 'Successfully created a new short url', { fullUrl, userId });
