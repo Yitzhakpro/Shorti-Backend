@@ -1,7 +1,7 @@
 import config from '../../../config';
 import { linksService } from '../../../services';
-import { getShortUrlSchema, createShortUrlSchema, deleteShortUrlSchema } from './schemas';
-import { IGetShortUrlQuerystring, ICreateShortUrlBody, IDeleteShortUrlParams } from './types';
+import { getShortUrlSchema, createShortUrlSchema, deleteShortUrlSchema, renameShortUrlSchema } from './schemas';
+import { IGetShortUrlQuerystring, ICreateShortUrlBody, IDeleteShortUrlParams, IRenameShortUrlBody } from './types';
 import type { DecodedAuthToken } from '../../../types';
 import type { FastifyPluginAsync } from 'fastify';
 
@@ -42,6 +42,17 @@ const linksRoutes: FastifyPluginAsync = async (fastify, _options) => {
       const urlObject = await linksService.createShortUrl(fullUrl, decodedToken.id, linkName);
 
       return urlObject;
+    }
+  );
+
+  fastify.post<{ Body: IRenameShortUrlBody }>(
+    '/renameShortUrl',
+    { schema: renameShortUrlSchema, preHandler: fastify.verifyUser },
+    async (request, _reply) => {
+      const { id, linkName } = request.body;
+      const decodedToken = (await request.jwtVerify()) as DecodedAuthToken;
+
+      await linksService.renameShortUrl(id, linkName, decodedToken.id);
     }
   );
 

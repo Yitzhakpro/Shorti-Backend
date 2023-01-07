@@ -7,6 +7,11 @@ export interface ICreateShortUrlBody {
   linkName?: string;
 }
 
+export interface IRenameShortUrlBody {
+  id: string;
+  linkName: string;
+}
+
 export interface IDeleteShortUrlParams {
   id: string;
 }
