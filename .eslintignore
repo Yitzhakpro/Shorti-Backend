@@ -1,0 +1,9 @@
+node_modules/
+.husky/
+
+build/
+coverage/
+yarn.lock
+Dockerfile
+
+.lintstagedrc

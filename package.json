@@ -4,16 +4,51 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
+    "prepare": "husky install",
     "dev": "nodemon ./src/index.ts",
     "build": "rimraf ./build && tsc -p ./tsconfig.json",
-    "start": "node ./build/index.js"
+    "start": "node ./build/index.js",
+    "docker:builder": "docker build . -t shorti-backend",
+    "docker:run": "docker run --env-file=.env -p 8080:8080 -d shorti-backend",
+    "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/convict": "^6.1.1",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.43.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-autofix": "^1.1.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.3",
     "nodemon": "^2.0.20",
+    "pino-pretty": "^9.1.1",
+    "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^8.3.0",
+    "@fastify/cors": "^8.2.0",
+    "@fastify/jwt": "^6.4.0",
+    "@types/bcrypt": "^5.0.0",
+    "bcrypt": "^5.1.0",
+    "class-validator": "^0.14.0",
+    "convict": "^6.2.3",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.10.0",
+    "fastify-plugin": "^4.3.0",
+    "pg": "^8.8.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.10",
+    "winston": "^3.8.2",
+    "yup": "^0.32.11"
   }
 }
