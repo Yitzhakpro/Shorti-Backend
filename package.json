@@ -8,6 +8,8 @@
     "dev": "nodemon ./src/index.ts",
     "build": "rimraf ./build && tsc -p ./tsconfig.json",
     "start": "node ./build/index.js",
+    "docker:builder": "docker build . -t shorti-backend",
+    "docker:run": "docker run --env-file=.env -p 8080:8080 -d shorti-backend",
     "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },

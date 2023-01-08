@@ -4,5 +4,6 @@ node_modules/
 build/
 coverage/
 yarn.lock
+Dockerfile
 
 .lintstagedrc
